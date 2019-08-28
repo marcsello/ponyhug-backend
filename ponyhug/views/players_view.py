@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
-from utils import json_required, jwt, ponytoken_required, this_player
-from flask_jwt_simple import create_jwt
+from utils import json_required, ponytoken_required, this_player
 
 from model import db, Player
 from schemas import PlayerSchema

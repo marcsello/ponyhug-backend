@@ -25,7 +25,7 @@ def ponytoken_required(f):
 
 		playerid = get_jwt_identity()
 
-		player = Player.get(playerid)
+		player = Player.query.get(playerid)
 
 		if player:
 			ctx_stack.top.current_player_object = player

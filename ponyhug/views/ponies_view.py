@@ -2,7 +2,6 @@
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
 from utils import json_required, ponytoken_required, this_player
-from flask_jwt_simple import create_jwt
 
 from model import db, Pony, Hug
 from schemas import PonySchema
@@ -11,7 +10,7 @@ from schemas import PonySchema
 class PoniesView(FlaskView):
 
 	pony_schema = PonySchema(many=False)
-	ponies_schema = PonySchema(many=True, only=['title', 'image'])
+	ponies_schema = PonySchema(many=True, only=['id', 'title', 'image'])
 
 	@ponytoken_required
 	def index(self):
@@ -27,7 +26,7 @@ class PoniesView(FlaskView):
 	@ponytoken_required
 	def get(self, id: int):
 
-		pony = Pony.get(id)
+		pony = Pony.query.get(id)
 
 		if not pony:
 			abort(404)

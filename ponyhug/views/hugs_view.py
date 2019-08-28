@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
-from utils import json_required, jwt, ponytoken_required, this_player
-from flask_jwt_simple import create_jwt
+from utils import json_required, ponytoken_required, this_player
 
 from model import db, Pony, Hug
 from schemas import HugSchema
@@ -47,7 +46,7 @@ class HugsView(FlaskView):
 			abort(409, "Already hugged")
 
 		# create new hug
-		hug = Hug(pony=pony, player=player)
+		hug = Hug(pony=pony, player=this_player())
 
 		db.session.add(hug)
 		db.session.commit()
