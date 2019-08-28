@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import request, abort
 from flask_classful import FlaskView
-from utils import json_required, jwt
+from utils import json_required
 from flask_jwt_simple import create_jwt
 
 from model import db, Player
