@@ -28,5 +28,5 @@ class RegisterView(FlaskView):
 		db.session.add(player)
 		db.session.commit()
 
-		return {"jwt": create_jwt(identity=player.id)}
+		return {"jwt": create_jwt(identity=player.id)}, 201
 

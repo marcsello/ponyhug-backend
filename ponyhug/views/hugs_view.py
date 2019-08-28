@@ -17,17 +17,17 @@ class HugsView(FlaskView):
 	def index(self):
 		hugs = this_player().hugs
 
-		return jsonify(self.hugs_schema(hugs)), 200
+		return jsonify(self.hugs_schema.dump(hugs)), 200
 
 	@ponytoken_required
 	def get(self, id: int):
 
-		hug = Hug.query.filter(db.and_(Hug.player=this_player(), Hug.id=id)).first()  # only hugs by the current player is allowed
+		hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == id)).first()  # only hugs by the current player is allowed
 
 		if not hug:
 			abort(404)
 
-		return jsonify(self.hug_schema(hug)), 200
+		return jsonify(self.hug_schema.dump(hug)), 200
 
 	@ponytoken_required
 	@json_required
@@ -41,7 +41,7 @@ class HugsView(FlaskView):
 			abort(404)
 
 		# check if pony already hugged by this player
-		hug = Hug.query.filter(db.and_(Hug.player=this_player(), Hug.pony=pony)).first()
+		hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.pony == pony)).first()
 
 		if hug:
 			abort(409, "Already hugged")
@@ -52,4 +52,4 @@ class HugsView(FlaskView):
 		db.session.add(hug)
 		db.session.commit()
 
-		return jsonify(self.hug_schema(hug)), 201
+		return jsonify(self.hug_schema.dump(hug)), 201

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-from marshmallow_sqlalchemy import ModelSchema, fields
+from marshmallow import fields
+from marshmallow_sqlalchemy import ModelSchema
 from model import Hug
 
 
