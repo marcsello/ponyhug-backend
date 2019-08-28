@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import request, abort, jsonify
+from flask import request, abort
 from flask_classful import FlaskView
 from utils import json_required, jwt
 from flask_jwt_simple import create_jwt
@@ -28,5 +28,5 @@ class RegisterView(FlaskView):
 		db.session.add(player)
 		db.session.commit()
 
-		return jsonify({"jwt": create_jwt(identity=player.id)})
+		return {"jwt": create_jwt(identity=player.id)}
 

@@ -12,7 +12,7 @@ except ImportError:  # pragma: no cover
 jwt = JWTManager()
 
 
-def current_player() -> Player:
+def this_player() -> Player:
 
 	return ctx_stack.top.current_player_object
 
