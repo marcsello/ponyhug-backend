@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from flask import abort
 from flask_jwt_simple import JWTManager, jwt_required, get_jwt_identity
 from functools import wraps
 
