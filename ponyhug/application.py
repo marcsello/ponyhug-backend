@@ -15,8 +15,6 @@ from views import RegisterView, PlayersView, HugsView, PoniesView
 app = Flask(__name__)
 
 # configure flask app
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('PONYHUG_SQL_URI', 'sqlite:///:memory:')
-app.config['JWT_SECRET_KEY'] = os.environ["PONYHUG_SECRET_KEY"]  # Tokes will least very-very long... so we need a constant key
 app.config['JWT_EXPIRES'] = timedelta(days=14)  # yup, that long
 
 # initialize stuff
