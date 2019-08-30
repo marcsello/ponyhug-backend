@@ -3,6 +3,7 @@ from flask import request, abort
 from flask_classful import FlaskView
 from utils import json_required
 from flask_jwt_simple import create_jwt
+import bleach
 
 from model import db, Player
 
@@ -18,6 +19,9 @@ class RegisterView(FlaskView):
 		if not playername:
 			abort(422, "Missing field")
 
+		# sanitize input
+		playername = bleach.clean(playername)[:50] # <- this should not be hardcoded here
+
 		player = Player.query.filter_by(name=playername).first()
 
 		if player:
@@ -28,5 +32,5 @@ class RegisterView(FlaskView):
 		db.session.add(player)
 		db.session.commit()
 
-		return {"jwt": create_jwt(identity=player.id)}, 201
+		return {"jwt": create_jwt(identity=player.id), "playername" : playername}, 201
 
