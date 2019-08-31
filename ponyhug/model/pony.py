@@ -8,4 +8,4 @@ class Pony(db.Model):
 	key = db.Column(db.String(10), unique=True, nullable=False)
 	title = db.Column(db.String(255), nullable=False)
 	source = db.Column(db.String(255), nullable=True)
-	image = db.Column(db.String(255), unique=True)
+	image = db.Column(db.String(255),)
