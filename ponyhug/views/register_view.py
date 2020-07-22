@@ -25,7 +25,7 @@ class RegisterView(FlaskView):
         player = Player.query.filter_by(name=playername).first()
 
         if player:
-            abort(403, "Name already in use")
+            abort(409, "Name already in use")
 
         player = Player(name=playername)
 
