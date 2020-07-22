@@ -10,7 +10,7 @@ from schemas import PonySchema
 class PoniesView(FlaskView):
 
 	pony_schema = PonySchema(many=False)
-	ponies_schema = PonySchema(many=True, only=['id', 'title', 'image'])
+	ponies_schema = PonySchema(many=True, only=['id', 'name', 'image'])
 
 	@ponytoken_required
 	def index(self):
