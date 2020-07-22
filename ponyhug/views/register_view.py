@@ -10,27 +10,26 @@ from model import db, Player
 
 class RegisterView(FlaskView):
 
-	@json_required
-	def post(self):
+    @json_required
+    def post(self):
 
-		params = request.get_json()
-		playername = params.get("playername")
+        params = request.get_json()
+        playername = params.get("playername")
 
-		if not playername:
-			abort(422, "Missing field")
+        if not playername:
+            abort(422, "Missing field")
 
-		# sanitize input
-		playername = bleach.clean(playername)[:50] # <- this should not be hardcoded here
+        # sanitize input
+        playername = bleach.clean(playername)[:50]  # <- this should not be hardcoded here
 
-		player = Player.query.filter_by(name=playername).first()
+        player = Player.query.filter_by(name=playername).first()
 
-		if player:
-			abort(403, "Name already in use")
+        if player:
+            abort(403, "Name already in use")
 
-		player = Player(name=playername)
+        player = Player(name=playername)
 
-		db.session.add(player)
-		db.session.commit()
+        db.session.add(player)
+        db.session.commit()
 
-		return {"jwt": create_jwt(identity=player.id), "playername" : playername}, 201
-
+        return {"jwt": create_jwt(identity=player.id), "playername": playername}, 201

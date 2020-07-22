@@ -5,9 +5,8 @@ from model import Hug
 
 
 class HugSchema(ModelSchema):
+    player = fields.Pluck('PlayerSchema', 'name', many=False)
+    pony = fields.Nested('PonySchema', many=False, only=['id', 'name', 'image'])
 
-	player = fields.Pluck('PlayerSchema', 'name', many=False)
-	pony = fields.Nested('PonySchema', many=False, only=['id', 'name', 'image'])
-
-	class Meta:
-		model = Hug
+    class Meta:
+        model = Hug
