@@ -4,8 +4,6 @@ from flask_jwt_simple import JWTManager
 from datetime import timedelta
 import os
 
-import configuration
-
 # import stuff
 from model import db
 from utils import jwt, register_all_error_handlers
@@ -17,8 +15,8 @@ from views import RegisterView, PlayersView, HugsView, PoniesView
 app = Flask(__name__)
 
 # configure flask app
-app.config['SQLALCHEMY_DATABASE_URI'] = configuration.SQLALCHEMY_DATABASE_URI
-app.config['JWT_SECRET_KEY'] = configuration.JWT_SECRET_KEY
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 app.config['JWT_EXPIRES'] = timedelta(days=14)  # yup, that long
 
 # initialize stuff
