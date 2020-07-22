@@ -15,7 +15,7 @@ from views import RegisterView, PlayersView, HugsView, PoniesView
 app = Flask(__name__)
 
 # configure flask app
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI', "sqlite://")
 app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 app.config['JWT_EXPIRES'] = timedelta(days=14)  # yup, that long
 
@@ -23,16 +23,19 @@ app.config['JWT_EXPIRES'] = timedelta(days=14)  # yup, that long
 db.init_app(app)
 jwt.init_app(app)
 
-with app.app_context():
-	db.create_all()
+
+@app.before_first_request
+def initial_setup():
+    db.create_all()
+
 
 # register error handlers
 register_all_error_handlers(app)
 
 # register views
 for view in [RegisterView, PlayersView, HugsView, PoniesView]:
-	view.register(app, trailing_slash=False)
+    view.register(app, trailing_slash=False)
 
 # start debuggig if needed
 if __name__ == "__main__":
-	app.run(debug=True)
+    app.run(debug=True)
