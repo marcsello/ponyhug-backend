@@ -8,7 +8,7 @@ from model import db
 from utils import jwt, register_all_error_handlers
 
 # import views
-from views import RegisterView, PlayersView, HugsView, PoniesView
+from views import PlayersView, HugsView, PoniesView
 
 # create flask app
 app = Flask(__name__)
@@ -32,7 +32,7 @@ def initial_setup():
 register_all_error_handlers(app)
 
 # register views
-for view in [RegisterView, PlayersView, HugsView, PoniesView]:
+for view in [PlayersView, HugsView, PoniesView]:
     view.register(app, trailing_slash=False)
 
 # start debuggig if needed
