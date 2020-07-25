@@ -38,7 +38,7 @@ class HugsView(FlaskView):
         pony = Pony.query.filter_by(key=ponykey).first()
 
         if not pony:
-            abort(404)
+            abort(404, "Unknown key")
 
         # create new hug
         hug = Hug(pony=pony, player=this_player())

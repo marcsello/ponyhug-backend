@@ -28,10 +28,10 @@ class PoniesView(FlaskView):
         pony = Pony.query.get(id)
 
         if not pony:
-            abort(404)
+            abort(404, "Undiscovered or non-existent pony")
 
         # should replace to exists()
         if not Hug.query.filter(db.and_(Hug.player == this_player(), Hug.pony == pony)).first():
-            abort(404)  # only hugged ponies should be visible
+            abort(404, "Undiscovered or non-existent pony")  # only hugged ponies should be visible
 
         return jsonify(self.pony_schema.dump(pony)), 200
