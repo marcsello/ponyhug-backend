@@ -38,7 +38,10 @@ class PlayersView(FlaskView):
             abort(422, "Missing field")
 
         # sanitize input
-        playername = bleach.clean(playername)[:50]  # <- this should not be hardcoded here
+        playername_maxlen = Player.name.property.columns[0].type.length
+        playername = bleach.clean(playername, tags=[])[:playername_maxlen]  # cut to approriate length
+        # Length limiting is required here as SQLAlchemy does not validate the length of a field
+        # If a database engine does not validate length (Like sqlite) that would lead to issues
 
         player = Player.query.filter_by(name=playername).first()
 
