@@ -6,6 +6,7 @@ from flask_jwt_simple import create_jwt
 
 from model import db, Player
 from schemas import PlayerSchema
+import sqlalchemy.exc
 import bleach
 
 
@@ -43,14 +44,13 @@ class PlayersView(FlaskView):
         # Length limiting is required here as SQLAlchemy does not validate the length of a field
         # If a database engine does not validate length (Like sqlite) that would lead to issues
 
-        player = Player.query.filter_by(name=playername).first()
-
-        if player:
-            abort(409, "Name already in use")
-
         player = Player(name=playername)
 
         db.session.add(player)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            abort(409, "Name already in use")
 
         return {"jwt": create_jwt(identity=player.id), "playername": playername}, 201

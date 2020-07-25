@@ -4,6 +4,11 @@ from sqlalchemy.sql import func
 
 
 class Hug(db.Model):
+    # The following makes sure that only one player-pony pair exists
+    __table_args__ = (
+        db.UniqueConstraint('pony_id', 'player_id', name='unique_pony_player'),
+    )
+
     id = db.Column(db.Integer, primary_key=True, auto_increment=True)
     timestamp = db.Column(db.TIMESTAMP, nullable=False, server_default=func.now())
 
