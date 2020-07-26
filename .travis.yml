@@ -1,0 +1,10 @@
+language: bash
+dist: bionic
+
+services:
+  - docker
+
+script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com
+  - docker build -t registry.kmlabz.com/ponyhug/backend .
+  - docker push registry.kmlabz.com/ponyhug/backend

@@ -23,9 +23,9 @@ class PoniesView(FlaskView):
         return jsonify(self.ponies_schema.dump(ponies_hugged_by_this_player)), 200
 
     @ponytoken_required
-    def get(self, id: int):
+    def get(self, ponyid: int):
 
-        pony = Pony.query.get(id)
+        pony = Pony.query.get(ponyid)
 
         if not pony:
             abort(404, "Undiscovered or non-existent pony")

@@ -19,10 +19,9 @@ class HugsView(FlaskView):
         return jsonify(self.hugs_schema.dump(hugs)), 200
 
     @ponytoken_required
-    def get(self, id: int):
-
+    def get(self, hugid: int):
         # only hugs by the current player is allowed
-        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == id)).first()
+        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first()
 
         if not hug:
             abort(404)
@@ -48,5 +47,4 @@ class HugsView(FlaskView):
             db.session.commit()
         except sqlalchemy.exc.IntegrityError:
             abort(409, "Already hugged")
-
         return jsonify(self.hug_schema.dump(hug)), 201

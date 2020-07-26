@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
+import os
 from flask import Flask
 from datetime import timedelta
-import os
 
 # import stuff
 from model import db
