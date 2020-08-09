@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import os
-from flask import Flask
 from datetime import timedelta
+from flask import Flask, redirect
 
 # import stuff
+from flask_security import login_required, logout_user
 from model import db
 from utils import jwt, register_all_error_handlers
+from login import security, user_datastore, blueprint
 
 # import views
 from views import PlayersView, HugsView, PoniesView
@@ -17,15 +19,30 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI', "sqlite://")
 app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 app.config['JWT_EXPIRES'] = timedelta(days=14)  # yup, that long
+app.config['GOOGLE_OAUTH_CLIENT_ID'] = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
+app.config['GOOGLE_OAUTH_CLIENT_SECRET'] = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
+
+
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(16))
 
 # initialize stuff
 db.init_app(app)
 jwt.init_app(app)
+app.register_blueprint(blueprint, url_prefix="/login")
+security.init_app(app, user_datastore)
 
 
 @app.before_first_request
 def initial_setup():
     db.create_all()
+
+
+# Logout route
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 # register error handlers

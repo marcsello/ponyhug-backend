@@ -13,5 +13,5 @@ class PlayerSchema(ModelSchema):
         return Hug.query.filter_by(player=player).count()
 
     class Meta:
-        exclude = ['id', 'hugs']
+        exclude = ['id', 'hugs', 'active', 'email', 'confirmed_at', 'roles']
         model = Player

@@ -1,10 +1,16 @@
 language: bash
 dist: bionic
 
+addons:
+  sonarqube: true
+
 services:
   - docker
 
 script:
+  - pip3 install pylint
+  - pip3 install -r requirements.txt
+  - sonar-scanner -D sonar.host.url=$SONAR_HOST_URL -D sonar.login=$SONAR_TOKEN -X
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com
   - docker build -t registry.kmlabz.com/ponyhug/backend .
   - docker push registry.kmlabz.com/ponyhug/backend
