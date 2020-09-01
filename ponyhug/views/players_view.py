@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from flask import abort, jsonify, request
 from flask_classful import FlaskView
+from flask_security import roles_required
+
 from utils import ponytoken_required, json_required
 from flask_jwt_simple import create_jwt
 
@@ -15,12 +17,14 @@ class PlayersView(FlaskView):
     players_schema = PlayerSchema(many=True)
 
     @ponytoken_required
+    @roles_required('admin')
     def index(self):
         players = Player.query.all()
 
         return jsonify(self.players_schema.dump(players)), 200
 
     @ponytoken_required
+    @roles_required('admin')
     def get(self, name: str):
         player = Player.query.filter_by(name=name).first()
 

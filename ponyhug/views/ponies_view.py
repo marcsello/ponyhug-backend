@@ -12,6 +12,7 @@ class PoniesView(FlaskView):
     ponies_schema = PonySchema(many=True, only=['id', 'name', 'image'])
 
     @ponytoken_required
+    @roles_required('admin')
     def index(self):
 
         this_players_hugs = this_player().hugs

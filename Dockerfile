@@ -14,4 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./ponyhug .
 
-ENTRYPOINT ["python3", "application.py"]
+EXPOSE 8080
+
+ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:8080", "--workers", "1", "--threads", "1", "application:app"]

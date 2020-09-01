@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
+from flask_security import roles_required
+
 from utils import json_required, ponytoken_required, this_player
 import sqlalchemy.exc
 
@@ -13,12 +15,14 @@ class HugsView(FlaskView):
     hugs_schema = HugSchema(many=True)
 
     @ponytoken_required
+    @roles_required('admin')
     def index(self):
         hugs = this_player().hugs
 
         return jsonify(self.hugs_schema.dump(hugs)), 200
 
     @ponytoken_required
+    @roles_required('admin')
     def get(self, hugid: int):
         # only hugs by the current player is allowed
         hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first()
@@ -29,7 +33,6 @@ class HugsView(FlaskView):
         return jsonify(self.hug_schema.dump(hug)), 200
 
     @ponytoken_required
-    @json_required
     def post(self):
         params = request.get_json()
         ponykey = params.get("key")
