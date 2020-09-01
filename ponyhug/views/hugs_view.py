@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
+from flask_login import login_required
 from flask_security import roles_required
 
 from utils import json_required, ponytoken_required, this_player
@@ -33,6 +34,7 @@ class HugsView(FlaskView):
         return jsonify(self.hug_schema.dump(hug)), 200
 
     @ponytoken_required
+    @login_required
     def post(self):
         params = request.get_json()
         ponykey = params.get("key")
