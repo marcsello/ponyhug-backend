@@ -54,4 +54,4 @@ class PlayersView(FlaskView):
         except sqlalchemy.exc.IntegrityError:
             abort(409, "Name already in use")
 
-        return {"jwt": create_jwt(identity=player.id), "playername": playername, "is_admin": False}, 201
+        return {"jwt": create_jwt(identity=player.id), "playername": playername, "is_admin": player.is_admin}, 201
