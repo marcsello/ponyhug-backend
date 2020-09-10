@@ -2,7 +2,7 @@
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
 
-from utils import ponytoken_required, this_player
+from utils import ponytoken_required, this_player, json_required
 import sqlalchemy.exc
 
 from model import db, Pony, Hug
@@ -30,6 +30,7 @@ class HugsView(FlaskView):
         return jsonify(self.hug_schema.dump(hug)), 200
 
     @ponytoken_required
+    @json_required
     def post(self):
         params = request.get_json()
         ponykey = params.get("key")

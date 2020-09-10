@@ -3,14 +3,14 @@ from sqlalchemy import func, desc
 from flask import jsonify
 from flask_classful import FlaskView
 
-from utils import ponytoken_required, admin_required
+from utils import ponytoken_required, anyadmin_required
 
 from model import db, Hug
 
 
 class StatsView(FlaskView):
 
-    @admin_required
+    @anyadmin_required
     def index(self):
         return 'TODO'
 
