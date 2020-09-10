@@ -89,7 +89,7 @@ class AdminView(FlaskView):
     @route('/timeframes', methods=['GET'])
     def listtimeframes(self):
         timeframes = Timeframe.query.all()
-        return jsonify(self.timeframes_schema.dump(timeframes)), 201
+        return jsonify(self.timeframes_schema.dump(timeframes)), 200
 
     @anyadmin_required
     @json_required
