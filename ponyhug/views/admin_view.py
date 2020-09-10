@@ -4,8 +4,7 @@ from flask_classful import FlaskView, route
 
 from marshmallow import ValidationError
 
-from utils import ponytoken_required, this_player, json_required, anyadmin_required, adminkey_required, \
-    admintoken_required
+from utils import ponytoken_required, this_player, json_required, anyadmin_required
 from flask_jwt_simple import create_jwt
 
 from model import db, Player, Pony, Timeframe

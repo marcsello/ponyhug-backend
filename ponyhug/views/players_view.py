@@ -2,7 +2,7 @@
 from flask import abort, jsonify, request
 from flask_classful import FlaskView
 
-from utils import ponytoken_required, json_required, anyadmin_required
+from utils import json_required, anyadmin_required
 from flask_jwt_simple import create_jwt
 
 from model import db, Player

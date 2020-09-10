@@ -3,7 +3,7 @@ from sqlalchemy import func, desc
 from flask import jsonify
 from flask_classful import FlaskView
 
-from utils import ponytoken_required, anyadmin_required
+from utils import ponytoken_required
 
 from model import db, Hug
 
