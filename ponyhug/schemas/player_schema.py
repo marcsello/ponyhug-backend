@@ -13,5 +13,9 @@ class PlayerSchema(ModelSchema):
         return Hug.query.filter_by(player=player).count()
 
     class Meta:
-        exclude = ['id', 'hugs', 'is_admin']
+        # Regular players won't be able to access this schema, so we can safely dump the is_admin
+        exclude = [
+            'id',
+            'hugs'
+        ]
         model = Player
