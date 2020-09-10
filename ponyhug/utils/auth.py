@@ -60,7 +60,10 @@ def adminkey_required(f):
         if not auth_header:
             abort(401, "Authorization header missing")
 
-        auth_type, auth_key = auth_header.split(' ', 1)
+        try:
+            auth_type, auth_key = auth_header.split(' ', 1)
+        except ValueError:
+            abort(400, "Bad Authorization header. Expected value 'Key <KEY>'")
 
         if auth_type == 'Key' and auth_key == current_app.config['ADMIN_KEY']:
             current_app.logger.warning("Key auth used!")
@@ -89,6 +92,6 @@ def anyadmin_required(f):
             return admintoken_required(f)(*args, **kwargs)
 
         else:  # This would allow outsiders to enumerate admin endpoints to distinct them from regular endpoints
-            abort(400, "Wrong auth type")
+            abort(400, "Bad Authorization header. Expected value '(Bearer/Key) <JWT>'")
 
     return call
