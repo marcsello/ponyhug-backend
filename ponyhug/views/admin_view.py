@@ -8,7 +8,7 @@ from flask_jwt_simple import create_jwt
 from model import db, Player
 
 
-class StatsView(FlaskView):
+class AdminView(FlaskView):
 
     @ponytoken_required
     @json_required

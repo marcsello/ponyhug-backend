@@ -47,3 +47,5 @@ def admin_required(f):
             return f(*args, **kwargs)
         else:
             abort(403, "Not admin")
+
+    return call
