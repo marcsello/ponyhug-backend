@@ -10,10 +10,6 @@ from model import db, Hug
 
 class StatsView(FlaskView):
 
-    @anyadmin_required
-    def index(self):
-        return 'TODO'
-
     @ponytoken_required
     def leader(self):
         asd = db.session.query(
