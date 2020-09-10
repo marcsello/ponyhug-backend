@@ -9,7 +9,7 @@ class Player(db.Model):
 
     registered = db.Column(db.TIMESTAMP, nullable=False, server_default=func.now())
 
-    is_admin = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
 
 
