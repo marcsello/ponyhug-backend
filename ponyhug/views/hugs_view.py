@@ -38,7 +38,7 @@ class HugsView(FlaskView):
         ).first()
 
         if not timeframe:
-            abort(403, "No active timeframe")
+            abort(423, "No active timeframe")
 
         params = request.get_json()
         ponykey = params.get("key")
