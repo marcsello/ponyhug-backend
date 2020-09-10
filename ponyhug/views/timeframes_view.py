@@ -8,7 +8,7 @@ from schemas import TimeframeSchema
 
 
 class TimeframesView(FlaskView):
-    timeframe_schema = TimeframeSchema(many=False)
+    timeframe_schema = TimeframeSchema(many=False, exclude=['id'])
 
     def current(self):
         now = datetime.now()
