@@ -44,6 +44,6 @@ class PlayersView(FlaskView):
 
         return jsonify({
             "jwt": create_jwt(identity=player.id),
-            "playername": playername,
+            "name": playername,
             "is_admin": player.is_admin
         }), 201
