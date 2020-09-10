@@ -3,9 +3,6 @@ dist: bionic
 python:
   - "3.8"
 
-addons:
-  sonarqube: true
-
 services:
   - docker
 
@@ -14,9 +11,6 @@ install:
   - pip3 install -r requirements.txt
 
 script:
-  - sonar-scanner -D sonar.host.url=$SONAR_HOST_URL -D sonar.login=$SONAR_TOKEN -X
-
-before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com
 
 deploy:
