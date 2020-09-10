@@ -1,4 +1,4 @@
-language: bash
+language: python
 dist: bionic
 python:
   - "3.8"
@@ -16,7 +16,7 @@ install:
 script:
   - sonar-scanner -D sonar.host.url=$SONAR_HOST_URL -D sonar.login=$SONAR_TOKEN -X
 
-befure_deploy:
+before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com
 
 deploy:
