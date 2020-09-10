@@ -2,7 +2,7 @@
 from flask import abort, jsonify, request
 from flask_classful import FlaskView
 
-from utils import json_required, anyadmin_required
+from utils import json_required, ponytoken_required, this_player
 from flask_jwt_simple import create_jwt
 
 from model import db, Player
@@ -13,23 +13,10 @@ import bleach
 
 class PlayersView(FlaskView):
     player_schema = PlayerSchema(many=False)
-    players_schema = PlayerSchema(many=True)
 
-    @anyadmin_required
-    def index(self):
-        players = Player.query.all()
-
-        return jsonify(self.players_schema.dump(players)), 200
-
-    # TODO: create /me
-    @anyadmin_required
-    def get(self, name: str):
-        player = Player.query.filter_by(name=name).first()
-
-        if not player:
-            abort(404)
-
-        return jsonify(self.player_schema.dump(player)), 200
+    @ponytoken_required
+    def me(self):
+        return jsonify(self.player_schema.dump(this_player())), 200
 
     @json_required
     def post(self):
@@ -55,4 +42,8 @@ class PlayersView(FlaskView):
         except sqlalchemy.exc.IntegrityError:
             abort(409, "Name already in use")
 
-        return {"jwt": create_jwt(identity=player.id), "playername": playername, "is_admin": player.is_admin}, 201
+        return jsonify({
+            "jwt": create_jwt(identity=player.id),
+            "playername": playername,
+            "is_admin": player.is_admin
+        }), 201

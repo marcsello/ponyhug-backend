@@ -24,7 +24,7 @@ class PlayerSchema(ModelSchema):
         return (last_hug.timestamp - first_hug.timestamp).total_seconds()
 
     class Meta:
-        # Regular players won't be able to access this schema, so we can safely dump the is_admin
+        # Regular players won't be able to access other player's schema, so we can safely dump the is_admin
         exclude = [
             'id',
             'hugs'
