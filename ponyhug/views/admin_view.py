@@ -49,10 +49,7 @@ class AdminView(FlaskView):
         params = request.get_json()
         playername = params.get("playername")
 
-        player = Player.query.filter(name=playername).first()
-
-        if not player:
-            abort(404, "No such player")
+        player = Player.query.filter(name=playername).first_or_404("No such player")
 
         return {"jwt": create_jwt(identity=player.id), "playername": playername, "is_admin": player.is_admin}, 200
 

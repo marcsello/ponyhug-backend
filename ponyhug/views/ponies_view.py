@@ -14,7 +14,6 @@ class PoniesView(FlaskView):
 
     @ponytoken_required
     def index(self):
-
         this_players_hugs = this_player().hugs
 
         # yup... we solve this from code... pretty shitty method
@@ -25,14 +24,14 @@ class PoniesView(FlaskView):
 
     @ponytoken_required
     def get(self, ponyid: int):
-
         pony = Pony.query.get(ponyid)
 
         if not pony:
             abort(404, "Undiscovered or non-existent pony")
 
         # should replace to exists()
-        if not Hug.query.filter(db.and_(Hug.player == this_player(), Hug.pony == pony)).first():
-            abort(404, "Undiscovered or non-existent pony")  # only hugged ponies should be visible
+        Hug.query.filter(
+            db.and_(Hug.player == this_player(), Hug.pony == pony)
+        ).first_or_404("Undiscovered or non-existent pony")
 
         return jsonify(self.pony_schema.dump(pony)), 200

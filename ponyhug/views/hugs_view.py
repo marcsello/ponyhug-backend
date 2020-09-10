@@ -24,10 +24,7 @@ class HugsView(FlaskView):
     @ponytoken_required
     def get(self, hugid: int):
         # only hugs by the current player is allowed
-        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first()
-
-        if not hug:
-            abort(404)
+        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first_or_404()
 
         return jsonify(self.hug_schema.dump(hug)), 200
 
@@ -46,10 +43,7 @@ class HugsView(FlaskView):
         params = request.get_json()
         ponykey = params.get("key")
 
-        pony = Pony.query.filter_by(key=ponykey).first()
-
-        if not pony:
-            abort(404, "Unknown key")
+        pony = Pony.query.filter_by(key=ponykey).first_or_404("Unknown key")
 
         # create new hug
         hug = Hug(pony=pony, player=this_player())
