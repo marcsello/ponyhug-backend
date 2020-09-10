@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+from datetime import datetime
+
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
 
 from utils import ponytoken_required, this_player, json_required
 import sqlalchemy.exc
 
-from model import db, Pony, Hug
+from model import db, Pony, Hug, Timeframe
 from schemas import HugSchema
 
 
@@ -32,6 +34,15 @@ class HugsView(FlaskView):
     @ponytoken_required
     @json_required
     def post(self):
+
+        now = datetime.now()
+        timeframe = Timeframe.query.filter(
+            db.and_(Timeframe.begin_timestamp <= now, Timeframe.end_timestamp >= now)
+        ).first()
+
+        if not timeframe:
+            abort(403, "No active timeframe")
+
         params = request.get_json()
         ponykey = params.get("key")
 
