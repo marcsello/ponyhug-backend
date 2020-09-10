@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from flask import abort, jsonify
 from flask_classful import FlaskView
-from flask_login import login_required
-from flask_security import roles_required
 
 from utils import ponytoken_required, this_player
 
@@ -15,7 +13,6 @@ class PoniesView(FlaskView):
     ponies_schema = PonySchema(many=True, only=['id', 'name', 'image'])
 
     @ponytoken_required
-    @roles_required('admin')
     def index(self):
 
         this_players_hugs = this_player().hugs
@@ -27,7 +24,6 @@ class PoniesView(FlaskView):
         return jsonify(self.ponies_schema.dump(ponies_hugged_by_this_player)), 200
 
     @ponytoken_required
-    @login_required
     def get(self, ponyid: int):
 
         pony = Pony.query.get(ponyid)

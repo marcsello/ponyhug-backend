@@ -31,7 +31,8 @@ def ponytoken_required(f):
             return f(*args, **kwargs)
 
         else:
-            # this really is a server error, since causing this error by the user should be caused by a forged requrest, which should not be possible because of the jwt
+            # this really is a server error, since causing this error by the user should be caused by a forged requrest,
+            # which should not be possible because of the jwt
             abort(500, "Player ID invalid")
 
     return call
