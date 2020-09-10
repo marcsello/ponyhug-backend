@@ -16,4 +16,4 @@ class StatsView(FlaskView):
             func.count(Hug.player_id).label('cnt'), Hug.player_id
         ).group_by(Hug.player_id).order_by(desc('cnt')).first()
 
-        return jsonify({"hugs_of_leader": asd.cnt}), 200
+        return jsonify({"hug_counter": asd.cnt}), 200
