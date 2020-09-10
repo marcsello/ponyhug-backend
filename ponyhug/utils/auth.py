@@ -36,3 +36,14 @@ def ponytoken_required(f):
             abort(500, "Player ID invalid")
 
     return call
+
+
+def admin_required(f):
+    @ponytoken_required
+    @wraps(f)
+    def call(*args, **kwargs):
+
+        if this_player().is_admin:
+            return f(*args, **kwargs)
+        else:
+            abort(403, "Not admin")
