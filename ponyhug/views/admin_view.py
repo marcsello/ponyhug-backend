@@ -4,16 +4,20 @@ from flask_classful import FlaskView, route
 
 from marshmallow import ValidationError
 
-from utils import ponytoken_required, this_player, json_required, anyadmin_required, adminkey_required, admintoken_required
+from utils import ponytoken_required, this_player, json_required, anyadmin_required, adminkey_required, \
+    admintoken_required
 from flask_jwt_simple import create_jwt
 
-from model import db, Player, Pony
-from schemas import PonySchema
+from model import db, Player, Pony, Timeframe
+from schemas import PonySchema, TimeframeSchema
 
 
 class AdminView(FlaskView):
     pony_schema = PonySchema(many=False)
     ponies_schema = PonySchema(many=True)
+
+    timeframe_schema = TimeframeSchema(many=False)
+    timeframes_schema = TimeframeSchema(many=True)
 
     @ponytoken_required
     @json_required
@@ -50,6 +54,8 @@ class AdminView(FlaskView):
 
         return {"jwt": create_jwt(identity=player.id), "playername": playername, "is_admin": player.is_admin}, 200
 
+    ### PONIES ###
+
     @anyadmin_required
     @json_required
     @route('/ponies', methods=['POST'])
@@ -75,4 +81,33 @@ class AdminView(FlaskView):
     @route('/ponies', methods=['GET'])
     def listponies(self):
         ponies = Pony.query.all()
-        return jsonify(self.ponies_schema.dump(ponies)), 201
+        return jsonify(self.ponies_schema.dump(ponies)), 200
+
+    ### TIMEFRAMES ###
+
+    @anyadmin_required
+    @route('/timeframes', methods=['GET'])
+    def listtimeframes(self):
+        timeframes = Timeframe.query.all()
+        return jsonify(self.timeframes_schema.dump(timeframes)), 201
+
+    @anyadmin_required
+    @json_required
+    @route('/timeframes', methods=['POST'])
+    def createtimeframe(self):
+        params = request.get_json()
+        try:
+            timeframe = self.timeframe_schema.load(params, session=db.session)
+        except ValidationError as e:
+            abort(400, str(e))
+
+        db.session.add(timeframe)
+        db.session.commit()
+        return jsonify(self.timeframe_schema.dump(timeframe)), 201
+
+    @anyadmin_required
+    @route('/timeframes/<timeframeid>', methods=['DELETE'])
+    def deletetimeframe(self, timeframeid: int):
+        Timeframe.query.filter_by(id=timeframeid).delete()
+        db.session.commit()
+        return '', 204
