@@ -2,6 +2,7 @@
 import os
 from datetime import timedelta
 from flask import Flask
+from flask_cors import CORS
 
 # import stuff
 from model import db
@@ -24,6 +25,7 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(16))
 # initialize stuff
 db.init_app(app)
 jwt.init_app(app)
+CORS(app, origins=os.environ.get('ALLOWED_ORIGINS', '*'))
 
 
 @app.before_first_request
