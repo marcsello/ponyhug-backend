@@ -1,5 +1,7 @@
-language: bash
+language: python
 dist: bionic
+python:
+  - "3.8"
 
 addons:
   sonarqube: true
@@ -7,10 +9,18 @@ addons:
 services:
   - docker
 
-script:
+install:
   - pip3 install pylint
   - pip3 install -r requirements.txt
+
+script:
   - sonar-scanner -D sonar.host.url=$SONAR_HOST_URL -D sonar.login=$SONAR_TOKEN -X
+
+before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com
-  - docker build -t registry.kmlabz.com/ponyhug/backend .
-  - docker push registry.kmlabz.com/ponyhug/backend
+
+deploy:
+  provider: script
+  script: deploy.sh
+  on:
+    branch: master
