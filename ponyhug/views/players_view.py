@@ -21,6 +21,7 @@ class PlayersView(FlaskView):
 
         return jsonify(self.players_schema.dump(players)), 200
 
+    # TODO: create /me
     @anyadmin_required
     def get(self, name: str):
         player = Player.query.filter_by(name=name).first()
