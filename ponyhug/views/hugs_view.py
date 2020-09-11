@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from datetime import datetime
+import tzlocal
 
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
@@ -32,7 +33,7 @@ class HugsView(FlaskView):
     @json_required
     def post(self):
 
-        now = datetime.now()
+        now = datetime.now(tz=tzlocal.get_localzone())
         timeframe = Timeframe.query.filter(
             db.and_(Timeframe.begin_timestamp <= now, Timeframe.end_timestamp >= now)
         ).first()

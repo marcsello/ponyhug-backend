@@ -10,7 +10,7 @@ class Hug(db.Model):
     )
 
     id = db.Column(db.Integer, primary_key=True, auto_increment=True)
-    timestamp = db.Column(db.TIMESTAMP, nullable=False, server_default=func.now())
+    timestamp = db.Column(db.DateTime(timezone=True), nullable=False, server_default=func.now())
 
     pony_id = db.Column(db.Integer, db.ForeignKey("pony.id", ondelete="CASCADE"), nullable=False)
     pony = db.relationship("Pony", backref=db.backref("hugs", lazy=True))
