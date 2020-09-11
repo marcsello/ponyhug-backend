@@ -12,11 +12,15 @@ class StatsView(FlaskView):
 
     @ponytoken_required
     def leader(self):
-        asd = db.session.query(
+        leader_stat = db.session.query(
             func.count(Hug.player_id).label('cnt'), Hug.player_id
         ).group_by(Hug.player_id).order_by(desc('cnt')).first()
 
-        return jsonify({"hug_counter": asd.cnt}), 200
+        count = 0
+        if leader_stat:
+            count = leader_stat.cnt
+
+        return jsonify({"hug_counter": count}), 200
 
     @ponytoken_required
     def game(self):
