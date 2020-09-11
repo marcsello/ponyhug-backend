@@ -1,54 +1,57 @@
 #!/usr/bin/env python3
+from datetime import datetime
+import tzlocal
+
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
-from utils import json_required, ponytoken_required, this_player
 
-from model import db, Pony, Hug
+from utils import ponytoken_required, this_player, json_required
+import sqlalchemy.exc
+
+from model import db, Pony, Hug, Timeframe
 from schemas import HugSchema
 
 
 class HugsView(FlaskView):
+    hug_schema = HugSchema(many=False)
+    hugs_schema = HugSchema(many=True)
 
-	hug_schema = HugSchema(many=False)
-	hugs_schema = HugSchema(many=True)
+    @ponytoken_required
+    def index(self):
+        hugs = this_player().hugs
 
-	@ponytoken_required
-	def index(self):
-		hugs = this_player().hugs
+        return jsonify(self.hugs_schema.dump(hugs)), 200
 
-		return jsonify(self.hugs_schema.dump(hugs)), 200
+    @ponytoken_required
+    def get(self, hugid: int):
+        # only hugs by the current player is allowed
+        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first_or_404()
 
-	@ponytoken_required
-	def get(self, id: int):
+        return jsonify(self.hug_schema.dump(hug)), 200
 
-		hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == id)).first()  # only hugs by the current player is allowed
+    @ponytoken_required
+    @json_required
+    def post(self):
 
-		if not hug:
-			abort(404)
+        now = datetime.now(tz=tzlocal.get_localzone())
+        timeframe = Timeframe.query.filter(
+            db.and_(Timeframe.begin_timestamp <= now, Timeframe.end_timestamp >= now)
+        ).first()
 
-		return jsonify(self.hug_schema.dump(hug)), 200
+        if not timeframe:
+            abort(423, "No active timeframe")
 
-	@ponytoken_required
-	@json_required
-	def post(self):
-		params = request.get_json()
-		ponykey = params.get("key")
+        params = request.get_json()
+        ponykey = params.get("key")
 
-		pony = Pony.query.filter_by(key=ponykey).first()
+        pony = Pony.query.filter_by(key=ponykey).first_or_404("Unknown key")
 
-		if not pony:
-			abort(404)
+        # create new hug
+        hug = Hug(pony=pony, player=this_player())
 
-		# check if pony already hugged by this player
-		hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.pony == pony)).first()
-
-		if hug:
-			abort(409, "Already hugged")
-
-		# create new hug
-		hug = Hug(pony=pony, player=this_player())
-
-		db.session.add(hug)
-		db.session.commit()
-
-		return jsonify(self.hug_schema.dump(hug)), 201
+        db.session.add(hug)
+        try:
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            abort(409, "Already hugged")
+        return jsonify(self.hug_schema.dump(hug)), 201

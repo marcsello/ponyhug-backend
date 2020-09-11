@@ -1,0 +1,29 @@
+networks:
+  ponyhug:
+    external: false
+
+services:
+  test-db:
+    image: postgres:12
+    restart: always
+    environment:
+      - POSTGRES_USER=pnyhug
+      - POSTGRES_PASSWORD=ponyhug
+      - POSTGRES_DB=ponyhug
+    networks:
+      - ponyhug
+    volumes:
+      - ./postres-volume:/var/lib/postgresql/data
+
+  ponyhug-backend:
+    image: registry.kmlabz.com/ponyhug/backeng
+    restart: always
+    environment:
+      SQLALCHEMY_DATABASE_URI: "postgresql://ponyhug:ponyhug@test-db:5432/ponyhug"
+      JWT_SECRET_KEY: "lofasz"
+    depends_on:
+      - postgres
+    networks:
+      - ponyhug
+    ports:
+      - "127.0.0.1:8080:8080"

@@ -1,37 +1,37 @@
 #!/usr/bin/env python3
-from flask import request, abort, jsonify
+from flask import abort, jsonify
 from flask_classful import FlaskView
-from utils import json_required, ponytoken_required, this_player
+
+from utils import ponytoken_required, this_player
 
 from model import db, Pony, Hug
 from schemas import PonySchema
 
 
 class PoniesView(FlaskView):
+    pony_schema = PonySchema(many=False)
+    ponies_schema = PonySchema(many=True, only=['id', 'name', 'image'])
 
-	pony_schema = PonySchema(many=False)
-	ponies_schema = PonySchema(many=True, only=['id', 'title', 'image'])
+    @ponytoken_required
+    def index(self):
+        this_players_hugs = this_player().hugs
 
-	@ponytoken_required
-	def index(self):
+        # yup... we solve this from code... pretty shitty method
 
-		this_players_hugs = this_player().hugs
+        ponies_hugged_by_this_player = [hug.pony for hug in this_players_hugs]
 
-		# yup... we solve this from code... pretty shitty method
+        return jsonify(self.ponies_schema.dump(ponies_hugged_by_this_player)), 200
 
-		ponies_hugged_by_this_player = [hug.pony for hug in this_players_hugs]
+    @ponytoken_required
+    def get(self, ponyid: int):
+        pony = Pony.query.get(ponyid)
 
-		return jsonify(self.ponies_schema.dump(ponies_hugged_by_this_player)), 200
+        if not pony:
+            abort(404, "Undiscovered or non-existent pony")
 
-	@ponytoken_required
-	def get(self, id: int):
+        # should replace to exists()
+        Hug.query.filter(
+            db.and_(Hug.player == this_player(), Hug.pony == pony)
+        ).first_or_404("Undiscovered or non-existent pony")
 
-		pony = Pony.query.get(id)
-
-		if not pony:
-			abort(404)
-
-		if not Hug.query.filter(db.and_(Hug.player == this_player(), Hug.pony == pony)).first():  # should replace to exists()
-			abort(404)  # only hugged ponies should be visible
-
-		return jsonify(self.pony_schema.dump(pony)), 200
+        return jsonify(self.pony_schema.dump(pony)), 200
