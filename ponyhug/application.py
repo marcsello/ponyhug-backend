@@ -11,6 +11,7 @@ from utils import jwt, register_all_error_handlers
 # import views
 from views import PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView
 
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
 if SENTRY_DSN:
     sentry_sdk.init(
@@ -18,8 +19,8 @@ if SENTRY_DSN:
         integrations=[FlaskIntegration()],
         traces_sample_rate=1.0,
         send_default_pii=True,
-        release=RELEASE_ID,
-        environment=RELEASEMODE,
+        release=os.environ.get('RELEASE_ID', "dev"),
+        environment=os.environ.get('RELEASEMODE', "DEV"),
         _experiments={"auto_enabling_integrations": True}
     )
 
