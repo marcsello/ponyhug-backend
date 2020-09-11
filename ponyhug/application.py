@@ -19,6 +19,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI'
 app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
 app.config['JWT_EXPIRES'] = timedelta(days=14)  # yup, that long
 app.config['ADMIN_KEY'] = os.environ.get('ADMIN_KEY')  # None would not match anything
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(16))
 
