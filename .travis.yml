@@ -13,6 +13,9 @@ install:
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com
 
+after_success:
+  - docker build -t registry.kmlabz.com/ponyhug/backend .
+
 deploy:
   skip_cleanup: true
   provider: script
