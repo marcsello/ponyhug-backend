@@ -19,6 +19,6 @@ after_success:
 deploy:
   skip_cleanup: true
   provider: script
-  script: deploy.sh
+  script: docker push registry.kmlabz.com/ponyhug/backend
   on:
     branch: master
