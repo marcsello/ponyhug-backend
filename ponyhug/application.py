@@ -4,6 +4,9 @@ from datetime import timedelta
 from flask import Flask
 from flask_cors import CORS
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
 # import stuff
 from model import db
 from utils import jwt, register_all_error_handlers
