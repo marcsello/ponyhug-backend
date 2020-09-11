@@ -13,3 +13,5 @@ flask-cors
 
 psycopg2-binary
 gunicorn
+
+sentry_sdk[flask]
