@@ -11,6 +11,19 @@ from utils import jwt, register_all_error_handlers
 # import views
 from views import PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView
 
+
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[FlaskIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+        release=RELEASE_ID,
+        environment=RELEASEMODE,
+        _experiments={"auto_enabling_integrations": True}
+    )
+
+
 # create flask app
 app = Flask(__name__)
 
