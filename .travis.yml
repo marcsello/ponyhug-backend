@@ -14,6 +14,7 @@ script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com
 
 deploy:
+  skip_cleanup: true
   provider: script
   script: deploy.sh
   on:
