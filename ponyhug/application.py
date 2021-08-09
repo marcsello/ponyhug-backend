@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-import os
-from datetime import timedelta
 from flask import Flask
 from flask_cors import CORS
 
@@ -14,36 +12,27 @@ from utils import jwt, register_all_error_handlers
 # import views
 from views import PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView
 
-SENTRY_DSN = os.environ.get('SENTRY_DSN')
+from config import Config
 
-if SENTRY_DSN:
+if Config.SENTRY_DSN:
     sentry_sdk.init(
-        dsn=SENTRY_DSN,
+        dsn=Config.SENTRY_DSN,
         integrations=[FlaskIntegration()],
-        traces_sample_rate=1.0,
+        traces_sample_rate=0.0,  # https://develop.sentry.dev/sdk/performance/#tracessamplerate
         send_default_pii=True,
-        release=os.environ.get('RELEASE_ID', "dev"),
-        environment=os.environ.get('RELEASEMODE', "DEV"),
+        release=Config.SENTRY_RELEASE_ID,
+        environment=Config.SENTRY_ENVIRONMENT,
         _experiments={"auto_enabling_integrations": True}
     )
 
-
 # create flask app
 app = Flask(__name__)
-
-# configure flask app
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI', "sqlite://")
-app.config['JWT_SECRET_KEY'] = os.environ['JWT_SECRET_KEY']
-app.config['JWT_EXPIRES'] = timedelta(days=14)  # yup, that long
-app.config['ADMIN_KEY'] = os.environ.get('ADMIN_KEY')  # None would not match anything
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(16))
+app.config.from_object(Config)
 
 # initialize stuff
 db.init_app(app)
 jwt.init_app(app)
-CORS(app, origins=os.environ.get('ALLOWED_ORIGINS', '*'))
+CORS(app)
 
 
 @app.before_first_request
