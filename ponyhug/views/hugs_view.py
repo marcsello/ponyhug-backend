@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-from datetime import datetime
-import tzlocal
-
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
 

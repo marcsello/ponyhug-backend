@@ -5,7 +5,7 @@ import tzlocal
 from flask import abort, jsonify, request
 from flask_classful import FlaskView
 
-from utils import json_required, ponytoken_required, this_player, timeframe_required
+from utils import json_required, ponytoken_required, this_player, timeframe_required, anyadmin_required
 from flask_jwt_simple import create_jwt
 
 from model import db, Player
@@ -16,6 +16,17 @@ import bleach
 
 class PlayersView(FlaskView):
     player_schema = PlayerSchema(many=False)
+    players_schema = PlayerSchema(many=True)
+
+    @anyadmin_required
+    def index(self):
+        players = Player.query.all()
+        return jsonify(self.players_schema.dump(players)), 200
+
+    @anyadmin_required
+    def get(self, name: str):
+        player = Player.query.filter_by(name=name).first_or_404()
+        return jsonify(self.player_schema.dump(player)), 200
 
     @ponytoken_required
     def me(self):
@@ -51,3 +62,5 @@ class PlayersView(FlaskView):
             "name": playername,
             "is_admin": player.is_admin
         }), 201
+
+

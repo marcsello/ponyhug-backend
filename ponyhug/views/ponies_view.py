@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-from flask import abort, jsonify
+from flask import abort, jsonify, request
 from flask_classful import FlaskView
 
-from utils import ponytoken_required, this_player
+from marshmallow import ValidationError
+
+from utils import ponytoken_required, this_player, anyadmin_required, json_required
 
 from model import db, Pony, Hug
 from schemas import PonySchema
@@ -14,14 +16,10 @@ class PoniesView(FlaskView):
 
     decorators = [ponytoken_required]
 
+    @anyadmin_required
     def index(self):
-        this_players_hugs = this_player().hugs
-
-        # yup... we solve this from code... pretty shitty method
-
-        ponies_hugged_by_this_player = [hug.pony for hug in this_players_hugs]
-
-        return jsonify(self.ponies_schema.dump(ponies_hugged_by_this_player)), 200
+        ponies = Pony.query.all()
+        return jsonify(self.ponies_schema.dump(ponies)), 200
 
     def get(self, ponyid: int):
         pony = Pony.query.get(ponyid)
@@ -35,3 +33,23 @@ class PoniesView(FlaskView):
         ).first_or_404("Undiscovered or non-existent pony")
 
         return jsonify(self.pony_schema.dump(pony)), 200
+
+    @anyadmin_required
+    @json_required
+    def post(self):
+        params = request.get_json()
+        try:
+            pony = self.pony_schema.load(params, session=db.session)
+        except ValidationError as e:
+            return abort(400, str(e))
+
+        db.session.add(pony)
+        db.session.commit()
+        return jsonify(self.pony_schema.dump(pony)), 201
+
+    @anyadmin_required
+    def delete(self, ponyid: int):
+        Pony.query.filter_by(id=ponyid).delete()
+        db.session.commit()
+        return '', 204
+
