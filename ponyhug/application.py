@@ -47,6 +47,6 @@ register_all_error_handlers(app)
 for view in [PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView]:
     view.register(app, trailing_slash=False)
 
-# start debuggig if needed
+# start debugging if needed
 if __name__ == "__main__":
     app.run(debug=True)

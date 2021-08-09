@@ -32,9 +32,9 @@ def ponytoken_required(f):
             return f(*args, **kwargs)
 
         else:
-            # this really is a server error, since causing this error by the user should be caused by a forged requrest,
+            # this really is a server error, since causing this error by the user should be caused by a forged request,
             # which should not be possible because of the jwt
-            current_app.logger.warning("A valid JWT token recieved but the Player ID is invalid!")
+            current_app.logger.warning("A valid JWT token received but the Player ID is invalid!")
             return abort(500, "Player ID invalid")
 
     return call
