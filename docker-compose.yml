@@ -7,7 +7,7 @@ services:
     image: postgres:12
     restart: always
     environment:
-      - POSTGRES_USER=pnyhug
+      - POSTGRES_USER=ponyhug
       - POSTGRES_PASSWORD=ponyhug
       - POSTGRES_DB=ponyhug
     networks:
@@ -16,11 +16,11 @@ services:
       - ./postres-volume:/var/lib/postgresql/data
 
   ponyhug-backend:
-    image: registry.kmlabz.com/ponyhug/backeng
+    build: .
     restart: always
     environment:
       SQLALCHEMY_DATABASE_URI: "postgresql://ponyhug:ponyhug@test-db:5432/ponyhug"
-      JWT_SECRET_KEY: "lofasz"
+      JWT_SECRET_KEY: "test"
     depends_on:
       - postgres
     networks:
