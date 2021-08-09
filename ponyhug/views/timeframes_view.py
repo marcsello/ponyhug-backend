@@ -32,9 +32,8 @@ class TimeframesView(FlaskView):
     @anyadmin_required
     @json_required
     def post(self):
-        params = request.get_json()
         try:
-            timeframe = self.timeframe_schema.load(params, session=db.session)
+            timeframe = self.timeframe_schema.load(request.get_json(), session=db.session)
         except ValidationError as e:
             return abort(400, str(e))
 

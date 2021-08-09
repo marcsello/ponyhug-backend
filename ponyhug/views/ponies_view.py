@@ -37,9 +37,8 @@ class PoniesView(FlaskView):
     @anyadmin_required
     @json_required
     def post(self):
-        params = request.get_json()
         try:
-            pony = self.pony_schema.load(params, session=db.session)
+            pony = self.pony_schema.load(request.get_json(), session=db.session)
         except ValidationError as e:
             return abort(400, str(e))
 
