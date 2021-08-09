@@ -12,7 +12,8 @@ class PoniesView(FlaskView):
     pony_schema = PonySchema(many=False)
     ponies_schema = PonySchema(many=True, only=['id', 'name', 'image'])
 
-    @ponytoken_required
+    decorators = [ponytoken_required]
+
     def index(self):
         this_players_hugs = this_player().hugs
 
@@ -22,7 +23,6 @@ class PoniesView(FlaskView):
 
         return jsonify(self.ponies_schema.dump(ponies_hugged_by_this_player)), 200
 
-    @ponytoken_required
     def get(self, ponyid: int):
         pony = Pony.query.get(ponyid)
 

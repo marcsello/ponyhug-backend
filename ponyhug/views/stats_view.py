@@ -9,8 +9,8 @@ from model import db, Hug, Pony
 
 
 class StatsView(FlaskView):
+    decorators = [ponytoken_required]
 
-    @ponytoken_required
     def leader(self):
         leader_stat = db.session.query(
             func.count(Hug.player_id).label('cnt'), Hug.player_id
@@ -22,8 +22,6 @@ class StatsView(FlaskView):
 
         return jsonify({"hug_counter": count}), 200
 
-    @ponytoken_required
     def game(self):
         total_ponies = Pony.query.count()
-
         return jsonify({"total_ponies": total_ponies}), 200

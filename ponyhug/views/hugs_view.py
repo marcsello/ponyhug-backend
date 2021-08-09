@@ -16,20 +16,19 @@ class HugsView(FlaskView):
     hug_schema = HugSchema(many=False)
     hugs_schema = HugSchema(many=True)
 
-    @ponytoken_required
+    decorators = [ponytoken_required]
+
     def index(self):
         hugs = this_player().hugs
 
         return jsonify(self.hugs_schema.dump(hugs)), 200
 
-    @ponytoken_required
     def get(self, hugid: int):
         # only hugs by the current player is allowed
         hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first_or_404()
 
         return jsonify(self.hug_schema.dump(hug)), 200
 
-    @ponytoken_required
     @json_required
     def post(self):
 
