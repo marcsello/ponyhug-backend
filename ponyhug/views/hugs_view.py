@@ -5,10 +5,10 @@ import tzlocal
 from flask import request, abort, jsonify
 from flask_classful import FlaskView
 
-from utils import ponytoken_required, this_player, json_required
+from utils import ponytoken_required, this_player, json_required, timeframe_required
 import sqlalchemy.exc
 
-from model import db, Pony, Hug, Timeframe
+from model import db, Pony, Hug
 from schemas import HugSchema
 
 
@@ -30,15 +30,8 @@ class HugsView(FlaskView):
         return jsonify(self.hug_schema.dump(hug)), 200
 
     @json_required
+    @timeframe_required
     def post(self):
-
-        now = datetime.now(tz=tzlocal.get_localzone())
-        timeframe = Timeframe.query.filter(
-            db.and_(Timeframe.begin_timestamp <= now, Timeframe.end_timestamp >= now)
-        ).first()
-
-        if not timeframe:
-            return abort(423, "No active timeframe")
 
         params = request.get_json()
         ponykey = params.get("key")

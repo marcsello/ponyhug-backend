@@ -5,10 +5,10 @@ import tzlocal
 from flask import abort, jsonify, request
 from flask_classful import FlaskView
 
-from utils import json_required, ponytoken_required, this_player
+from utils import json_required, ponytoken_required, this_player, timeframe_required
 from flask_jwt_simple import create_jwt
 
-from model import db, Player, Timeframe
+from model import db, Player
 from schemas import PlayerSchema
 import sqlalchemy.exc
 import bleach
@@ -22,15 +22,8 @@ class PlayersView(FlaskView):
         return jsonify(self.player_schema.dump(this_player())), 200
 
     @json_required
+    @timeframe_required
     def post(self):
-
-        now = datetime.now(tz=tzlocal.get_localzone())
-        timeframe = Timeframe.query.filter(
-            db.and_(Timeframe.begin_timestamp <= now, Timeframe.end_timestamp >= now)
-        ).first()
-
-        if not timeframe:
-            return abort(423, "No active timeframe")
 
         params = request.get_json()
         playername = params.get("playername")
