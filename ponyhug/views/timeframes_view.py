@@ -35,7 +35,7 @@ class TimeframesView(FlaskView):
         try:
             timeframe = self.timeframe_schema.load(request.get_json(), session=db.session)
         except ValidationError as e:
-            return abort(400, str(e))
+            return abort(422, str(e))
 
         db.session.add(timeframe)
         db.session.commit()

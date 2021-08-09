@@ -39,7 +39,7 @@ class PoniesView(FlaskView):
         try:
             pony = self.pony_schema.load(request.get_json(), session=db.session)
         except ValidationError as e:
-            return abort(400, str(e))
+            return abort(422, str(e))
 
         db.session.add(pony)
         db.session.commit()

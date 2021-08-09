@@ -43,4 +43,5 @@ class HugsView(FlaskView):
             db.session.commit()
         except sqlalchemy.exc.IntegrityError:
             return abort(409, "Already hugged")
+
         return jsonify(self.hug_schema.dump(hug)), 201
