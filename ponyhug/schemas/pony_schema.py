@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from typing import Optional, Dict
 from marshmallow import fields
-from marshmallow_sqlalchemy import ModelSchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy import asc
 
 from model import Hug, Pony
 
 
-class PonySchema(ModelSchema):
+class PonySchema(SQLAlchemyAutoSchema):
     first_hug = fields.Method("get_first_hug", dump_only=True)
     hugs = fields.Pluck('HugSchema', 'player', many=True, dump_only=True)
 
@@ -25,3 +25,6 @@ class PonySchema(ModelSchema):
     class Meta:
         load_only = ['key']
         model = Pony
+        include_relationships = True
+        load_instance = True
+        include_fk = True

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from sqlalchemy import asc, desc
 from marshmallow import fields
-from marshmallow_sqlalchemy import ModelSchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from model import Player
 
 from model import Hug
 
 
-class PlayerSchema(ModelSchema):
+class PlayerSchema(SQLAlchemyAutoSchema):
     hug_counter = fields.Method("get_hug_count", dump_only=True)
     playtime = fields.Method("get_playtime", dump_only=True)
 
@@ -30,3 +30,7 @@ class PlayerSchema(ModelSchema):
             'hugs'
         ]
         model = Player
+        include_relationships = True
+        load_instance = True
+        include_fk = True
+
