@@ -1,5 +1,5 @@
 language: python
-dist: bionic
+dist: focal
 python:
   - "3.9"
 
@@ -7,14 +7,12 @@ services:
   - docker
 
 script:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com
-
-after_success:
-  - docker build -t registry.kmlabz.com/ponyhug/backend .
+  - docker build --build-arg SENTRY_RELEASE_ID=$TRAVIS_BUILD_NUMBER -t registry.kmlabz.com/ponyhug/backend:$TRAVIS_BUILD_NUMBER .
+  - docker tag registry.kmlabz.com/ponyhug/backend:$TRAVIS_BUILD_NUMBER registry.kmlabz.com/ponyhug/backend:latest
 
 deploy:
   skip_cleanup: true
   provider: script
-  script: docker push registry.kmlabz.com/ponyhug/backend
+  script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com && docker push registry.kmlabz.com/ponyhug/backend
   on:
     branch: master
