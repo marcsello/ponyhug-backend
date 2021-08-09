@@ -14,13 +14,12 @@ class PoniesView(FlaskView):
     pony_schema = PonySchema(many=False)
     ponies_schema = PonySchema(many=True, only=['id', 'name', 'image'])
 
-    decorators = [ponytoken_required]
-
     @anyadmin_required
     def index(self):
         ponies = Pony.query.all()
         return jsonify(self.ponies_schema.dump(ponies)), 200
 
+    @ponytoken_required
     def get(self, ponyid: int):
         pony = Pony.query.get(ponyid)
 
