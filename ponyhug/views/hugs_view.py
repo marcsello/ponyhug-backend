@@ -39,7 +39,7 @@ class HugsView(FlaskView):
         ).first()
 
         if not timeframe:
-            abort(423, "No active timeframe")
+            return abort(423, "No active timeframe")
 
         params = request.get_json()
         ponykey = params.get("key")
@@ -53,5 +53,5 @@ class HugsView(FlaskView):
         try:
             db.session.commit()
         except sqlalchemy.exc.IntegrityError:
-            abort(409, "Already hugged")
+            return abort(409, "Already hugged")
         return jsonify(self.hug_schema.dump(hug)), 201

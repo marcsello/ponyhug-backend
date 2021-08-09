@@ -10,6 +10,6 @@ def json_required(f):
         if request.is_json:
             return f(*args, **kwargs)
         else:
-            abort(400, "JSON required")
+            return abort(400, "JSON required")
 
     return call

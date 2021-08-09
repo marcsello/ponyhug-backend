@@ -27,7 +27,7 @@ class PoniesView(FlaskView):
         pony = Pony.query.get(ponyid)
 
         if not pony:
-            abort(404, "Undiscovered or non-existent pony")
+            return abort(404, "Undiscovered or non-existent pony")
 
         # should replace to exists()
         Hug.query.filter(

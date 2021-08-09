@@ -29,13 +29,13 @@ class AdminView(FlaskView):
         player = this_player()
 
         if player.is_admin:
-            abort(409, "This player is already an admin")
+            return abort(409, "This player is already an admin")
 
         params = request.get_json()
         adminkey = params.get("key")
 
         if adminkey != current_app.config['ADMIN_KEY']:
-            abort(401, "Invalid key")
+            return abort(401, "Invalid key")
 
         player.is_admin = True
         db.session.add(player)
@@ -63,7 +63,7 @@ class AdminView(FlaskView):
         try:
             pony = self.pony_schema.load(params, session=db.session)
         except ValidationError as e:
-            abort(400, str(e))
+            return abort(400, str(e))
 
         db.session.add(pony)
         db.session.commit()
@@ -98,7 +98,7 @@ class AdminView(FlaskView):
         try:
             timeframe = self.timeframe_schema.load(params, session=db.session)
         except ValidationError as e:
-            abort(400, str(e))
+            return abort(400, str(e))
 
         db.session.add(timeframe)
         db.session.commit()

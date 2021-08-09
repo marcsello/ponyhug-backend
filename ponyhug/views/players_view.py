@@ -30,13 +30,13 @@ class PlayersView(FlaskView):
         ).first()
 
         if not timeframe:
-            abort(423, "No active timeframe")
+            return abort(423, "No active timeframe")
 
         params = request.get_json()
         playername = params.get("playername")
 
         if not playername:
-            abort(422, "Missing field")
+            return abort(422, "Missing field")
 
         # sanitize input
         playername_maxlen = Player.name.property.columns[0].type.length
@@ -51,7 +51,7 @@ class PlayersView(FlaskView):
         try:
             db.session.commit()
         except sqlalchemy.exc.IntegrityError:
-            abort(409, "Name already in use")
+            return abort(409, "Name already in use")
 
         return jsonify({
             "jwt": create_jwt(identity=player.id),
