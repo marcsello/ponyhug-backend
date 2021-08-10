@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-from flask import abort, current_app, request
+from flask import abort, current_app, request, jsonify
 from flask_classful import FlaskView, route
 
 from utils import ponytoken_required, this_player, json_required, anyadmin_required
 from flask_jwt_simple import create_jwt
 
 from model import db, Player
-from schemas import PonySchema, PlayerSchema
+from schemas import PonySchema, PlayerSchema, LoginSuccessSchema
 
 
 class AdminView(FlaskView):
     pony_schema = PonySchema(many=False)
     ponies_schema = PonySchema(many=True)
+
+    login_success_schema = LoginSuccessSchema(many=False)
 
     player_schema = PlayerSchema(many=False)
 
@@ -45,8 +47,13 @@ class AdminView(FlaskView):
 
         player = Player.query.filter(name=playername).first_or_404("No such player")
 
-        return {"jwt": create_jwt(identity=player.id), "playername": playername, "is_admin": player.is_admin}, 200
+        response = {
+            "jwt": create_jwt(identity=player.id),
+            "name": playername,
+            "is_admin": player.is_admin
+        }
 
+        return jsonify(self.login_success_schema.dump(response)), 200
 
 
 

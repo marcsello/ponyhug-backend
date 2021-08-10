@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-from datetime import datetime
-import tzlocal
-
 from flask import abort, jsonify, request
 from flask_classful import FlaskView
 
@@ -9,7 +6,7 @@ from utils import json_required, ponytoken_required, this_player, timeframe_requ
 from flask_jwt_simple import create_jwt
 
 from model import db, Player
-from schemas import PlayerSchema
+from schemas import PlayerSchema, LoginSuccessSchema
 import sqlalchemy.exc
 import bleach
 
@@ -17,6 +14,8 @@ import bleach
 class PlayersView(FlaskView):
     player_schema = PlayerSchema(many=False)
     players_schema = PlayerSchema(many=True)
+
+    login_success_schema = LoginSuccessSchema(many=False)
 
     @anyadmin_required
     def index(self):
@@ -57,10 +56,10 @@ class PlayersView(FlaskView):
         except sqlalchemy.exc.IntegrityError:
             return abort(409, "Name already in use")
 
-        return jsonify({
+        response = {
             "jwt": create_jwt(identity=player.id),
             "name": playername,
             "is_admin": player.is_admin
-        }), 201
+        }
 
-
+        return jsonify(self.login_success_schema.dump(response)), 201
