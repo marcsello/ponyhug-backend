@@ -43,7 +43,7 @@ class PlayersView(FlaskView):
 
         # sanitize input
         playername_maxlen = Player.name.property.columns[0].type.length
-        playername = bleach.clean(playername, tags=[])[:playername_maxlen]  # cut to approriate length
+        playername = bleach.clean(playername, tags=[]).strip()[:playername_maxlen]  # cut to appropriate length
         # Length limiting is required here as SQLAlchemy does not validate the length of a field
         # If a database engine does not validate length (Like sqlite) that would lead to issues
 
