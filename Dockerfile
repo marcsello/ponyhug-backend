@@ -16,4 +16,4 @@ COPY ./ponyhug .
 
 EXPOSE 8080
 
-ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:8080", "--workers", "4", "--threads", "2", "application:app"]
+ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:8080", "--workers", "4", "--threads", "2", "application:create_app()"]
