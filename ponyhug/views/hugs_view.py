@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-from flask import request, abort, jsonify
+from flask import request, jsonify
 from flask_classful import FlaskView
 
 from utils import ponytoken_required, this_player, json_required, timeframe_required
-import sqlalchemy.exc
 
 from model import db, Pony, Hug
 from schemas import HugSchema

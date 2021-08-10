@@ -36,7 +36,7 @@ class PlayersView(FlaskView):
     def post(self):
 
         params = request.get_json()
-        playername = params.get("playername")
+        playername = params.get("name")
 
         if not playername:
             return abort(422, "Missing field")
@@ -58,7 +58,7 @@ class PlayersView(FlaskView):
 
         response = {
             "jwt": create_jwt(identity=player.id),
-            "name": playername,
+            "name": player.name,
             "is_admin": player.is_admin
         }
 
