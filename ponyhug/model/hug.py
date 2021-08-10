@@ -17,3 +17,5 @@ class Hug(db.Model):
 
     player_id = db.Column(db.Integer, db.ForeignKey("player.id", ondelete="CASCADE"), nullable=False)
     player = db.relationship("Player", backref=db.backref("hugs", lazy=True))
+
+    count = db.Column(db.Integer, nullable=False, default=1)

@@ -35,13 +35,16 @@ class HugsView(FlaskView):
 
         pony = Pony.query.filter_by(key=ponykey).first_or_404("Unknown key")
 
-        # create new hug
-        hug = Hug(pony=pony, player=this_player())
+        hug = Hug.query.filter_by(pony=pony, player=this_player()).first()
+        if hug:
+            new = False
+            hug.count += 1
+        else:
+            # create new hug
+            new = True
+            hug = Hug(pony=pony, player=this_player())
 
         db.session.add(hug)
-        try:
-            db.session.commit()
-        except sqlalchemy.exc.IntegrityError:
-            return abort(409, "Already hugged")
+        db.session.commit()
 
-        return jsonify(self.hug_schema.dump(hug)), 201
+        return jsonify(self.hug_schema.dump(hug)), 201 if new else 200
