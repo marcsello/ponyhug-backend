@@ -28,7 +28,7 @@ def create_app(config_object=None) -> Flask:
 
     # initialize stuff
     from model import db
-    from utils import jwt, register_all_error_handlers
+    from utils import jwt, register_all_error_handlers, register_all_health_checks
     from flask_cors import CORS
 
     db.init_app(app)
@@ -41,6 +41,9 @@ def create_app(config_object=None) -> Flask:
 
     # register error handlers
     register_all_error_handlers(app)
+
+    # register health checks
+    register_all_health_checks(app)
 
     # import views
     from views import PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView
