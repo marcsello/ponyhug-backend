@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from flask_classful import FlaskView
+from marshmallow import ValidationError
 
 from utils import ponytoken_required, this_player, json_required, timeframe_required
 
 from model import db, Pony, Hug
-from schemas import HugSchema
+from schemas import HugSchema, PonykeySchema
 
 
 class HugsView(FlaskView):
     hug_schema = HugSchema(many=False)
     hugs_schema = HugSchema(many=True)
+
+    ponykey_schema = PonykeySchema(many=False)
 
     decorators = [ponytoken_required]
 
@@ -28,9 +31,12 @@ class HugsView(FlaskView):
     @json_required
     @timeframe_required
     def post(self):
+        try:
+            key = self.ponykey_schema.load(request.get_json())
+        except ValidationError as e:
+            return abort(422, str(e))
 
-        params = request.get_json()
-        ponykey = params.get("key")
+        ponykey = key['key']
 
         pony = Pony.query.filter_by(key=ponykey).first_or_404("Unknown key")
 
