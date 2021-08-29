@@ -10,3 +10,6 @@ class Pony(db.Model):
     story = db.Column(db.String(255), nullable=True)
     source = db.Column(db.String(255), nullable=True)
     image = db.Column(db.String(255), nullable=False)
+
+    order = db.Column(db.Integer, nullable=False, unique=True)
+
