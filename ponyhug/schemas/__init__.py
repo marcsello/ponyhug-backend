@@ -5,3 +5,4 @@ from .pony_schema import PonySchema
 from .timeframe_schema import TimeframeSchema
 from .login_success_schema import LoginSuccessSchema
 from .ponykey_schema import PonykeySchema
+from .faction_schema import FactionSchema

@@ -10,3 +10,7 @@ class Player(db.Model):
     registered = db.Column(db.DateTime(timezone=True), nullable=False, server_default=func.now())
 
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
+
+    # Do not cascade, because we don't want to delete our players when we delete a faction
+    faction_id = db.Column(db.Integer, db.ForeignKey("faction.id"), nullable=False)
+    faction = db.relationship("Faction", backref=db.backref("players", lazy=True))
