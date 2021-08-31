@@ -5,10 +5,6 @@ from model import Faction, Player
 
 
 class FactionSchema(SQLAlchemyAutoSchema):
-    member_count = fields.Method("get_member_count", dump_only=True)
-
-    def get_member_count(self, faction) -> int:
-        return Player.query.filter_by(faction=faction).count()
 
     class Meta:
         dump_only = ['id']
