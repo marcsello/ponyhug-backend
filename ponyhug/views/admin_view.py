@@ -7,6 +7,7 @@ from flask_jwt_simple import create_jwt
 
 from model import db, Player
 from schemas import PonySchema, PlayerSchema, LoginSuccessSchema
+from sqlalchemy import func
 
 
 class AdminView(FlaskView):
@@ -60,3 +61,8 @@ class AdminView(FlaskView):
     def impersonate(self):
         a = 1 / 0
         return jsonify({"a": a}), 200
+
+    @anyadmin_required
+    def faction_members(self):
+        counters = db.session.query(Player.faction_id, func.count(Player.faction_id)).group_by(Player.faction_id).all()
+        return jsonify(dict(counters))
