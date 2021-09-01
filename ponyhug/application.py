@@ -46,9 +46,9 @@ def create_app(config_object=None) -> Flask:
     register_all_health_checks(app)
 
     # import views
-    from views import PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView
+    from views import PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView, FactionsView
     # register views
-    for view in [PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView]:
+    for view in [PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView, FactionsView]:
         view.register(app, trailing_slash=False)
 
     return app
