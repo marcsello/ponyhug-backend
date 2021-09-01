@@ -58,7 +58,7 @@ class AdminView(FlaskView):
 
     @anyadmin_required
     @route('/crashtest', methods=['POST'])
-    def impersonate(self):
+    def crashtest(self):
         a = 1 / 0
         return jsonify({"a": a}), 200
 
