@@ -19,8 +19,7 @@ def create_app(config_object=None) -> Flask:
             traces_sample_rate=0.0,  # https://develop.sentry.dev/sdk/performance/#tracessamplerate
             send_default_pii=True,
             release=config_object.SENTRY_RELEASE_ID,
-            environment=config_object.SENTRY_ENVIRONMENT,
-            _experiments={"auto_enabling_integrations": True}
+            environment=config_object.SENTRY_ENVIRONMENT
         )
 
     app = Flask(__name__.split('.')[0])  # lol? https://spotofdata.com/flask-testing/
