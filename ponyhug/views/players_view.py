@@ -5,8 +5,9 @@ from flask_classful import FlaskView
 from utils import json_required, ponytoken_required, this_player, timeframe_required, anyadmin_required
 from flask_jwt_simple import create_jwt
 
-from model import db, Player
+from model import db, Player, Faction
 from schemas import PlayerSchema, LoginSuccessSchema
+from sqlalchemy import func
 import sqlalchemy.exc
 import bleach
 
@@ -45,11 +46,22 @@ class PlayersView(FlaskView):
 
         # sanitize input
         playername_maxlen = Player.name.property.columns[0].type.length
-        playername = bleach.clean(playername, tags=[], attributes={}).strip()[:playername_maxlen]  # cut to appropriate length
+        # cut to appropriate length
+        playername = bleach.clean(playername, tags=[], attributes={}).strip()[:playername_maxlen]
         # Length limiting is required here as SQLAlchemy does not validate the length of a field
         # If a database engine does not validate length (Like sqlite) that would lead to issues
 
-        player = Player(name=playername)
+        Player.query.filter(Faction.id == Player.faction_id).count(Player.id)
+
+        faction_member_counts = db.session.query(
+            Faction, func.count(Player.id)
+        ).join(
+            Player.faction_id == Faction.id
+        ).group_by(Faction.id).all()
+
+        faction = min(faction_member_counts, key=lambda o: o[1])[0]
+
+        player = Player(name=playername, faction=faction)
 
         db.session.add(player)
 
