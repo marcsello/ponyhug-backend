@@ -24,7 +24,7 @@ class StatsView(FlaskView):
 
     def factions(self):
         counters = db.session.query(
-            Faction.id, func.count(Player.hugs)
+            Faction.id, func.sum(Player.hugs)
         ).join(
             Player.faction_id == Faction.id
         ).group_by(Faction.id).all()
