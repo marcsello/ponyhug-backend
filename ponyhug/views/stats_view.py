@@ -24,10 +24,12 @@ class StatsView(FlaskView):
 
     def factions(self):
         counters = db.session.query(
-            Faction.id, func.sum(Player.hugs)
+            Faction.id, func.count(Hug.id)
         ).join(
-            Player.faction_id == Faction.id
-        ).group_by(Faction.id).all()
+            Player, Player.faction_id == Faction.id
+        ).join(
+            Hug, Hug.player_id == Player.id
+        ).group_by(Faction).all()
 
         return jsonify(dict(counters))
 
