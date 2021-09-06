@@ -11,19 +11,20 @@ from schemas import FactionSchema
 
 
 class FactionsView(FlaskView):
-    faction_schema = FactionSchema(many=False)
-    factions_schema = FactionSchema(many=True)
+    faction_schema = FactionSchema(many=False, exclude=["players"])
+    factions_schema = FactionSchema(many=True, exclude=["players"])
 
-    decorators = [ponytoken_required]
-
+    @ponytoken_required
     def index(self):
         factions = Faction.query.all()
         return jsonify(self.factions_schema.dump(factions)), 200
 
+    @ponytoken_required
     def get(self, id_: int):
         faction = Faction.query.filter_by(id=id_).first_or_404("No such faction")
         return jsonify(self.faction_schema.dump(faction)), 200
 
+    @ponytoken_required
     def my(self):
         return jsonify(self.faction_schema.dump(this_player().faction))
 
