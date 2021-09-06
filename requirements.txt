@@ -12,5 +12,11 @@ flask-cors~=3.0.10
 sentry_sdk[flask]~=1.3.1
 py-healthcheck~=1.10.1
 
+# Old version of PyJWT is needed, because Flask-JWT-Simple is not yet updated to use the new version
+# https://github.com/vimalloc/flask-jwt-simple/issues/20
+PyJWT~=1.7.1
+# According to this: https://github.com/vimalloc/flask-jwt-simple/issues/19
+# We should change flask-jwt-simple to flask-jwt-extended, because it's still maintained
+
 psycopg2-binary~=2.9.1
 gunicorn~=20.1.0
