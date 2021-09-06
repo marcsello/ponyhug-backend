@@ -78,7 +78,8 @@ class PlayersView(FlaskView):
         response = {
             "jwt": create_jwt(identity=player.id),
             "name": player.name,
-            "is_admin": player.is_admin
+            "is_admin": player.is_admin,
+            "faction": faction.id
         }
 
         return jsonify(self.login_success_schema.dump(response)), 201

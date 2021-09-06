@@ -6,7 +6,8 @@ class LoginSuccessSchema(Schema):
     jwt = fields.String(required=True)
     name = fields.String(required=True)
     is_admin = fields.Boolean(required=True)
+    faction = fields.Integer(required=True)
 
     class Meta:
-        dump_only = ['jwt', 'name', 'is_admin']
+        dump_only = ['jwt', 'name', 'is_admin', 'faction']
         unknown = RAISE
