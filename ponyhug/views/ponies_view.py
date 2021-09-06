@@ -33,6 +33,11 @@ class PoniesView(FlaskView):
 
         return jsonify(self.pony_schema.dump(pony)), 200
 
+    @ponytoken_required
+    def count(self):
+        total_ponies = Pony.query.count()
+        return jsonify({"total_ponies": total_ponies}), 200
+
     @anyadmin_required
     @json_required
     def post(self):

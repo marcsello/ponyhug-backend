@@ -5,7 +5,7 @@ from flask_classful import FlaskView
 
 from utils import ponytoken_required
 
-from model import db, Hug, Pony, Player, Faction
+from model import db, Hug, Player, Faction
 
 
 class StatsView(FlaskView):
@@ -31,6 +31,3 @@ class StatsView(FlaskView):
 
         return jsonify(dict(counters))
 
-    def game(self):
-        total_ponies = Pony.query.count()
-        return jsonify({"total_ponies": total_ponies}), 200
