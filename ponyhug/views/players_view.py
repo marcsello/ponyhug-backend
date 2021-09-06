@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, current_app
 from flask_classful import FlaskView
 
 from utils import json_required, ponytoken_required, this_player, timeframe_required, anyadmin_required
@@ -51,13 +51,16 @@ class PlayersView(FlaskView):
         # Length limiting is required here as SQLAlchemy does not validate the length of a field
         # If a database engine does not validate length (Like sqlite) that would lead to issues
 
-        Player.query.filter(Faction.id == Player.faction_id).count(Player.id)
-
         faction_member_counts = db.session.query(
             Faction, func.count(Player.id)
-        ).join(
-            Player.faction_id == Faction.id
-        ).group_by(Faction.id).all()
+        ).outerjoin(
+            Player
+        ).group_by(Faction).all()
+
+        if not faction_member_counts:
+            # No factions registered
+            current_app.logger.error("Can not register new user: Factions not defined yet!")
+            return abort(500, "Factions not defined yet")
 
         faction = min(faction_member_counts, key=lambda o: o[1])[0]
 
@@ -69,6 +72,8 @@ class PlayersView(FlaskView):
             db.session.commit()
         except sqlalchemy.exc.IntegrityError:
             return abort(409, "Name already in use")
+
+        current_app.logger.info(f"User {playername} registered. Assigned to faction: {faction.name}.")
 
         response = {
             "jwt": create_jwt(identity=player.id),
