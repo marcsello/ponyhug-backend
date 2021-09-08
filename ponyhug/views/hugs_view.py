@@ -19,8 +19,11 @@ class HugsView(FlaskView):
 
     def index(self):
         hugs = this_player().hugs
-
         return jsonify(self.hugs_schema.dump(hugs)), 200
+
+    def count(self):
+        hug_counter = Hug.query.filter_by(player=this_player()).count()
+        return jsonify({"hug_counter": hug_counter}), 200
 
     def get(self, hugid: int):
         # only hugs by the current player is allowed
