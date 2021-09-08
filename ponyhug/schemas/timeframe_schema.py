@@ -9,4 +9,4 @@ class TimeframeSchema(SQLAlchemyAutoSchema):
         model = Timeframe
         include_relationships = True
         load_instance = True
-        include_fk = True
+        include_fk = False

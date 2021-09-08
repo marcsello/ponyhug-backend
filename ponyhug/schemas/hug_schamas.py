@@ -12,4 +12,4 @@ class HugSchema(SQLAlchemyAutoSchema):
         model = Hug
         include_relationships = True
         load_instance = True
-        include_fk = True
+        include_fk = False
