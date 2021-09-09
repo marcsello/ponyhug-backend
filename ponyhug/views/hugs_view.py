@@ -11,7 +11,7 @@ from schemas import HugSchema, PonykeySchema
 
 class HugsView(FlaskView):
     hug_schema = HugSchema(many=False)
-    hugs_schema = HugSchema(many=True)
+    hugs_schema = HugSchema(many=True, only=['id', 'pony.id', 'pony.name', 'pony.image', 'pony.order'])
 
     ponykey_schema = PonykeySchema(many=False)
 

@@ -6,7 +6,7 @@ from model import Hug
 
 class HugSchema(SQLAlchemyAutoSchema):
     player = fields.Pluck('PlayerSchema', 'name', many=False)
-    pony = fields.Nested('PonySchema', many=False, only=['id', 'name', 'image'])
+    pony = fields.Nested('PonySchema', many=False)
 
     class Meta:
         model = Hug
