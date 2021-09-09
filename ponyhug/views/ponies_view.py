@@ -20,11 +20,8 @@ class PoniesView(FlaskView):
         return jsonify(self.ponies_schema.dump(ponies)), 200
 
     @ponytoken_required
-    def get(self, ponyid: int):
-        pony = Pony.query.get(ponyid)
-
-        if not pony:
-            return abort(404, "Undiscovered or non-existent pony")
+    def get(self, ponyid: int): # TODO: this can be solved using a single query
+        pony = Pony.query.get_or_404(ponyid, "Undiscovered or non-existent pony")
 
         # should replace to exists()
         Hug.query.filter(

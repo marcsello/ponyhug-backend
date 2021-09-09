@@ -24,8 +24,8 @@ class PlayersView(FlaskView):
         return jsonify(self.players_schema.dump(players)), 200
 
     @anyadmin_required
-    def get(self, name: str):
-        player = Player.query.filter_by(name=name).first_or_404()
+    def get(self, id_: int):  # Using names would have caused problems with the /me endpoint
+        player = Player.query.get_or_404(id_)
         return jsonify(self.player_schema.dump(player)), 200
 
     @ponytoken_required
