@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from model import Hug
+from model import Faction, Player
 
 
-class HugSchema(SQLAlchemyAutoSchema):
-    player = fields.Pluck('PlayerSchema', 'name', many=False)
-    pony = fields.Nested('PonySchema', many=False)
+class FactionSchema(SQLAlchemyAutoSchema):
 
     class Meta:
-        model = Hug
+        dump_only = ['id']
+        model = Faction
         include_relationships = True
         load_instance = True
         include_fk = False

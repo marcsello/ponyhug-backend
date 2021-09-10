@@ -32,10 +32,10 @@ def ponytoken_required(f):
             return f(*args, **kwargs)
 
         else:
-            # this really is a server error, since causing this error by the user should be caused by a forged requrest,
+            # this really is a server error, since causing this error by the user should be caused by a forged request,
             # which should not be possible because of the jwt
-            current_app.logger.warning("A valid JWT token recieved but the Player ID is invalid!")
-            abort(500, "Player ID invalid")
+            current_app.logger.warning("A valid JWT token received but the Player ID is invalid!")
+            return abort(500, "Player ID invalid")
 
     return call
 
@@ -48,7 +48,7 @@ def admintoken_required(f):
         if this_player().is_admin:
             return f(*args, **kwargs)
         else:
-            abort(403, "Not admin")
+            return abort(403, "Not admin")
 
     return call
 
@@ -59,18 +59,18 @@ def adminkey_required(f):
         auth_header = request.headers.get('Authorization')
 
         if not auth_header:
-            abort(401, "Authorization header missing")
+            return abort(401, "Authorization header missing")
 
         try:
             auth_type, auth_key = auth_header.split(' ', 1)
         except ValueError:
-            abort(400, "Bad Authorization header. Expected value 'Key <KEY>'")
+            return abort(400, "Bad Authorization header. Expected value 'Key <KEY>'")
 
         if auth_type == 'Key' and auth_key == current_app.config['ADMIN_KEY']:
             current_app.logger.warning("Key auth used!")
             return f(*args, **kwargs)
         else:
-            abort(401, "Invalid key")
+            return abort(401, "Invalid key")
 
     return call
 
@@ -82,7 +82,7 @@ def anyadmin_required(f):
         auth_header = request.headers.get('Authorization')
 
         if not auth_header:
-            abort(401, "Authorization header missing")
+            return abort(401, "Authorization header missing")
 
         auth_type = auth_header.split(' ', 1)[0]
 
@@ -93,6 +93,6 @@ def anyadmin_required(f):
             return admintoken_required(f)(*args, **kwargs)
 
         else:  # This would allow outsiders to enumerate admin endpoints to distinct them from regular endpoints
-            abort(400, "Bad Authorization header. Expected value '(Bearer/Key) <JWT>'")
+            return abort(400, "Bad Authorization header. Expected value '(Bearer/Key) <JWT>'")
 
     return call

@@ -7,12 +7,12 @@ services:
   - docker
 
 script:
-  - docker build --build-arg SENTRY_RELEASE_ID=$TRAVIS_BUILD_NUMBER -t registry.kmlabz.com/ponyhug/backend:$TRAVIS_BUILD_NUMBER .
-  - docker tag registry.kmlabz.com/ponyhug/backend:$TRAVIS_BUILD_NUMBER registry.kmlabz.com/ponyhug/backend:latest
+  - docker build --build-arg SENTRY_RELEASE_ID=$TRAVIS_BUILD_NUMBER -t marcsello/ponyhug-backend:$TRAVIS_BUILD_NUMBER .
+  - docker tag marcsello/ponyhug-backend:$TRAVIS_BUILD_NUMBER marcsello/ponyhug-backend:latest
 
 deploy:
   skip_cleanup: true
   provider: script
-  script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin registry.kmlabz.com && docker push registry.kmlabz.com/ponyhug/backend
+  script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin && docker push marcsello/ponyhug-backend
   on:
     branch: master

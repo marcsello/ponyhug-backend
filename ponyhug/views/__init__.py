@@ -5,3 +5,4 @@ from .ponies_view import PoniesView
 from .admin_view import AdminView
 from .stats_view import StatsView
 from .timeframes_view import TimeframesView
+from .factions_view import FactionsView

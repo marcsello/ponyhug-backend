@@ -1,60 +1,85 @@
 #!/usr/bin/env python3
-from datetime import datetime
-import tzlocal
-
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, current_app
 from flask_classful import FlaskView
 
-from utils import json_required, ponytoken_required, this_player
+from utils import json_required, ponytoken_required, this_player, timeframe_required, anyadmin_required
 from flask_jwt_simple import create_jwt
 
-from model import db, Player, Timeframe
-from schemas import PlayerSchema
+from model import db, Player, Faction
+from schemas import PlayerSchema, LoginSuccessSchema
+from sqlalchemy import func
 import sqlalchemy.exc
 import bleach
 
 
 class PlayersView(FlaskView):
     player_schema = PlayerSchema(many=False)
+    players_schema = PlayerSchema(many=True)
+
+    login_success_schema = LoginSuccessSchema(many=False)
+
+    @anyadmin_required
+    def index(self):
+        players = Player.query.all()
+        return jsonify(self.players_schema.dump(players)), 200
+
+    @anyadmin_required
+    def get(self, id_: int):  # Using names would have caused problems with the /me endpoint
+        player = Player.query.get_or_404(id_)
+        return jsonify(self.player_schema.dump(player)), 200
 
     @ponytoken_required
     def me(self):
         return jsonify(self.player_schema.dump(this_player())), 200
 
     @json_required
+    @timeframe_required
     def post(self):
 
-        now = datetime.now(tz=tzlocal.get_localzone())
-        timeframe = Timeframe.query.filter(
-            db.and_(Timeframe.begin_timestamp <= now, Timeframe.end_timestamp >= now)
-        ).first()
-
-        if not timeframe:
-            abort(423, "No active timeframe")
+        # It seems like that validating, cleaning etc. isn't really solvable using marshmallow
 
         params = request.get_json()
-        playername = params.get("playername")
+        playername = params.get("name")
 
         if not playername:
-            abort(422, "Missing field")
+            return abort(422, "Missing field")
 
         # sanitize input
         playername_maxlen = Player.name.property.columns[0].type.length
-        playername = bleach.clean(playername, tags=[])[:playername_maxlen]  # cut to approriate length
+        # cut to appropriate length
+        playername = bleach.clean(playername, tags=[], attributes={}).strip()[:playername_maxlen]
         # Length limiting is required here as SQLAlchemy does not validate the length of a field
         # If a database engine does not validate length (Like sqlite) that would lead to issues
 
-        player = Player(name=playername)
+        faction_member_counts = db.session.query(
+            Faction, func.count(Player.id)
+        ).outerjoin(
+            Player
+        ).group_by(Faction).all()
+
+        if not faction_member_counts:
+            # No factions registered
+            current_app.logger.error("Can not register new user: Factions not defined yet!")
+            return abort(500, "Factions not defined yet")
+
+        faction = min(faction_member_counts, key=lambda o: o[1])[0]
+
+        player = Player(name=playername, faction=faction)
 
         db.session.add(player)
 
         try:
             db.session.commit()
         except sqlalchemy.exc.IntegrityError:
-            abort(409, "Name already in use")
+            return abort(409, "Name already in use")
 
-        return jsonify({
+        current_app.logger.info(f"User {playername} registered. Assigned to faction: {faction.name}.")
+
+        response = {
             "jwt": create_jwt(identity=player.id),
-            "name": playername,
-            "is_admin": player.is_admin
-        }), 201
+            "name": player.name,
+            "is_admin": player.is_admin,
+            "faction": faction.id
+        }
+
+        return jsonify(self.login_success_schema.dump(response)), 201
