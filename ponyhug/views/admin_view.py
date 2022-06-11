@@ -3,7 +3,7 @@ from flask import abort, current_app, request, jsonify
 from flask_classful import FlaskView, route
 
 from utils import ponytoken_required, this_player, json_required, anyadmin_required
-from flask_jwt_simple import create_jwt
+from flask_jwt_extended import create_access_token
 
 from model import db, Player
 from schemas import PonySchema, PlayerSchema, LoginSuccessSchema
@@ -49,7 +49,7 @@ class AdminView(FlaskView):
         player = Player.query.filter(name=playername).first_or_404("No such player")
 
         response = {
-            "jwt": create_jwt(identity=player.id),
+            "jwt": create_access_token(identity=player.id),
             "name": playername,
             "is_admin": player.is_admin,
             "faction": player.faction.id

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import abort, request, current_app
 
-from flask_jwt_simple import JWTManager, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from functools import wraps
 
 from model import Player

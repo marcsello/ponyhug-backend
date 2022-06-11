@@ -3,7 +3,7 @@ from flask import abort, jsonify, request, current_app
 from flask_classful import FlaskView
 
 from utils import json_required, ponytoken_required, this_player, timeframe_required, anyadmin_required
-from flask_jwt_simple import create_jwt
+from flask_jwt_extended import create_access_token
 
 from model import db, Player, Faction
 from schemas import PlayerSchema, LoginSuccessSchema
@@ -76,7 +76,7 @@ class PlayersView(FlaskView):
         current_app.logger.info(f"User {playername} registered. Assigned to faction: {faction.name}.")
 
         response = {
-            "jwt": create_jwt(identity=player.id),
+            "jwt": create_access_token(identity=player.id),
             "name": player.name,
             "is_admin": player.is_admin,
             "faction": faction.id

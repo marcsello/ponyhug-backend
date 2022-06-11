@@ -1,22 +1,16 @@
-Flask~=2.0.1
+Flask~=2.1.2
 Flask-Classful~=0.14.2
 Flask-SQLAlchemy~=2.5.1
-marshmallow~=3.13.0
-marshmallow-sqlalchemy~=0.26.1
-SQLAlchemy~=1.4.22
-Flask-JWT-Simple~=0.0.3
-bleach~=4.0.0
-tzlocal~=2.1
-pytz~=2021.1
+marshmallow~=3.16.0
+marshmallow-sqlalchemy~=0.28.0
+SQLAlchemy~=1.4.37
+Flask-JWT-Extended~=4.4.1
+bleach~=5.0.0
+tzlocal~=4.2
+pytz~=2022.1
 flask-cors~=3.0.10
-sentry_sdk[flask]~=1.3.1
+sentry_sdk[flask]~=1.5.12
 py-healthcheck~=1.10.1
 
-# Old version of PyJWT is needed, because Flask-JWT-Simple is not yet updated to use the new version
-# https://github.com/vimalloc/flask-jwt-simple/issues/20
-PyJWT~=1.7.1
-# According to this: https://github.com/vimalloc/flask-jwt-simple/issues/19
-# We should change flask-jwt-simple to flask-jwt-extended, because it's still maintained
-
-psycopg2-binary~=2.9.1
+psycopg2-binary~=2.9.3
 gunicorn~=20.1.0
