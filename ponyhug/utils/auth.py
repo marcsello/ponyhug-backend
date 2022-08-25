@@ -19,7 +19,7 @@ def this_player() -> Player:
 
 
 def ponytoken_required(f):
-    @jwt_required
+    @jwt_required()
     @wraps(f)
     def call(*args, **kwargs):
 
