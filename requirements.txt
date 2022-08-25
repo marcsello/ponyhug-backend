@@ -1,15 +1,15 @@
-Flask~=2.1.2
+Flask~=2.2.2
 Flask-Classful~=0.14.2
 Flask-SQLAlchemy~=2.5.1
-marshmallow~=3.16.0
-marshmallow-sqlalchemy~=0.28.0
-SQLAlchemy~=1.4.37
-Flask-JWT-Extended~=4.4.1
-bleach~=5.0.0
+marshmallow~=3.17.1
+marshmallow-sqlalchemy~=0.28.1
+SQLAlchemy~=1.4.40
+Flask-JWT-Extended~=4.4.4
+bleach~=5.0.1
 tzlocal~=4.2
-pytz~=2022.1
+pytz~=2022.2.1
 flask-cors~=3.0.10
-sentry_sdk[flask]~=1.5.12
+sentry_sdk[flask]~=1.9.5
 py-healthcheck~=1.10.1
 
 psycopg2-binary~=2.9.3
