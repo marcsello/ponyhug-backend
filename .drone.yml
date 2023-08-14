@@ -1,0 +1,42 @@
+kind: pipeline
+type: docker
+name: build
+
+steps:
+  - name: hadolint
+    image: hadolint/hadolint:latest-debian
+    commands:
+      - hadolint --version
+      - hadolint --verbose --failure-threshold warning Dockerfile
+
+  - name: safety
+    image: pyupio/safety
+    commands:
+    - safety check --file requirements.txt
+
+  - name: kaniko
+    image: plugins/kaniko
+    settings:
+      username:
+        from_secret: DOCKER_USERNAME
+      password:
+        from_secret: DOCKER_PASSWORD
+      repo: marcsello/ponyhug-backend
+      build_args:
+        SENTRY_RELEASE_ID: ${DRONE_BUILD_NUMBER}
+      tags:
+        - latest
+        - ${DRONE_BUILD_NUMBER}
+    when:
+      branch:
+        - master
+
+  - name: telegram
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: TELEGRAM_TOKEN
+      to:
+        from_secret: TELEGRAM_CHAT_ID
+    when:
+      status: [ failure ]
