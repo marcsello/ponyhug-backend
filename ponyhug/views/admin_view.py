@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from flask import abort, current_app, request, jsonify
-from flask_classful import FlaskView, route
-
+from .api import api
+from flask_restx import Resource
 from utils import ponytoken_required, this_player, json_required, anyadmin_required
 from flask_jwt_extended import create_access_token
 
@@ -10,7 +10,7 @@ from schemas import PonySchema, PlayerSchema, LoginSuccessSchema
 from sqlalchemy import func
 
 
-class AdminView(FlaskView):
+class AdminView(Resource):
     pony_schema = PonySchema(many=False)
     ponies_schema = PonySchema(many=True)
 

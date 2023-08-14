@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from flask import abort, jsonify, request
-from flask_classful import FlaskView
+from .api import api
 
 from marshmallow import ValidationError
 

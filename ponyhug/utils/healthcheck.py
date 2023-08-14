@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
+from sqlalchemy import sql
 from model import db
 from healthcheck import HealthCheck
 
 
 def database_available():
     try:
-        db.session.execute('SELECT 1')
+        db.session.execute(sql.text('SELECT 1'))
         return True, 'db is ok'
     except Exception as e:
         return False, str(e)

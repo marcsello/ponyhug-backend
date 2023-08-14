@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 from sqlalchemy import func, desc
 from flask import jsonify
-from flask_classful import FlaskView
+from .api import api
+from flask_restx import Resource
 
 from utils import ponytoken_required
 
 from model import db, Hug, Player, Faction
 
+ns = api.namespace("stats", description="Various statistics")
 
-class StatsView(FlaskView):
-    decorators = [ponytoken_required]
 
-    def leader(self):
+@ns.route('/leader')
+class LeaderResource(Resource):
+
+    @ponytoken_required
+    def get(self):
         leader_stat = db.session.query(
             func.count(Hug.player_id).label('cnt'), Hug.player_id
         ).group_by(Hug.player_id).order_by(desc('cnt')).first()
@@ -22,7 +26,11 @@ class StatsView(FlaskView):
 
         return jsonify({"hug_counter": count}), 200
 
-    def factions(self):
+
+@ns.route('/factions')
+class FactionsResource(Resource):
+    @ponytoken_required
+    def get(self):
         counters = db.session.query(
             Faction.id, func.count(Hug.id)
         ).join(
@@ -32,4 +40,3 @@ class StatsView(FlaskView):
         ).group_by(Faction).all()
 
         return jsonify(dict(counters))
-

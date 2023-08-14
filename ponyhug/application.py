@@ -27,28 +27,22 @@ def create_app(config_object=None) -> Flask:
 
     # initialize stuff
     from model import db
-    from utils import jwt, register_all_error_handlers, register_all_health_checks
+    from utils import jwt, register_all_health_checks
     from flask_cors import CORS
 
     db.init_app(app)
     jwt.init_app(app)
     CORS(app)
 
-    @app.before_first_request
-    def initial_setup():
+    with app.app_context():
         db.create_all()
-
-    # register error handlers
-    register_all_error_handlers(app)
 
     # register health checks
     register_all_health_checks(app)
 
     # import views
-    from views import PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView, FactionsView
-    # register views
-    for view in [PlayersView, HugsView, PoniesView, StatsView, AdminView, TimeframesView, FactionsView]:
-        view.register(app, trailing_slash=False)
+    from views import api
+    api.init_app(app)
 
     return app
 

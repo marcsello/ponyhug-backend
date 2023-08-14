@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from flask import request, jsonify, abort
-from flask_classful import FlaskView
+from .api import api
+from flask_restx import Resource
 from marshmallow import ValidationError
 
 from utils import ponytoken_required, this_player, json_required, timeframe_required
@@ -8,34 +9,26 @@ from utils import ponytoken_required, this_player, json_required, timeframe_requ
 from model import db, Pony, Hug
 from schemas import HugSchema, PonykeySchema
 
+ns = api.namespace('hugs', description="Operations related to hugs", decorators=[ponytoken_required])
 
-class HugsView(FlaskView):
-    hug_schema = HugSchema(many=False)
-    hugs_schema = HugSchema(many=True, only=['id', 'pony.id', 'pony.name', 'pony.image', 'pony.order'])
+_hug_schema = HugSchema(many=False)
+_hugs_schema = HugSchema(many=True, only=['id', 'pony.id', 'pony.name', 'pony.image', 'pony.order'])
 
-    ponykey_schema = PonykeySchema(many=False)
+_ponykey_schema = PonykeySchema(many=False)
 
-    decorators = [ponytoken_required]
 
-    def index(self):
+@ns.route("")
+class HugsResource(Resource):
+
+    def get(self):
         hugs = this_player().hugs
-        return jsonify(self.hugs_schema.dump(hugs)), 200
-
-    def count(self):
-        hug_counter = Hug.query.filter_by(player=this_player()).count()
-        return jsonify({"hug_counter": hug_counter}), 200
-
-    def get(self, hugid: int):
-        # only hugs by the current player is allowed
-        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first_or_404()
-
-        return jsonify(self.hug_schema.dump(hug)), 200
+        return jsonify(_hugs_schema.dump(hugs)), 200
 
     @json_required
     @timeframe_required
     def post(self):
         try:
-            key = self.ponykey_schema.load(request.get_json())
+            key = _ponykey_schema.load(request.get_json())
         except ValidationError as e:
             return abort(422, str(e))
 
@@ -55,4 +48,21 @@ class HugsView(FlaskView):
         db.session.add(hug)
         db.session.commit()
 
-        return jsonify(self.hug_schema.dump(hug)), 201 if new else 200
+        return jsonify(_hug_schema.dump(hug)), 201 if new else 200
+
+@ns.route("/count")
+class HugsCountResource(Resource):
+
+    def get(self):
+        hug_counter = Hug.query.filter_by(player=this_player()).count()
+        return jsonify({"hug_counter": hug_counter}), 200
+
+
+@ns.route("/<int:id>")
+class HugResource(Resource):
+
+    def get(self, hugid: int):
+        # only hugs by the current player is allowed
+        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first_or_404()
+
+        return jsonify(_hug_schema.dump(hug)), 200

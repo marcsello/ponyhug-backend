@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from flask import abort, jsonify, request, current_app
-from flask_classful import FlaskView
+from .api import api
+from flask_restx import Resource
 
 from utils import json_required, ponytoken_required, this_player, timeframe_required, anyadmin_required
 from flask_jwt_extended import create_access_token
@@ -11,26 +12,21 @@ from sqlalchemy import func
 import sqlalchemy.exc
 import bleach
 
+_player_schema = PlayerSchema(many=False)
+_players_schema = PlayerSchema(many=True)
 
-class PlayersView(FlaskView):
-    player_schema = PlayerSchema(many=False)
-    players_schema = PlayerSchema(many=True)
+_login_success_schema = LoginSuccessSchema(many=False)
 
-    login_success_schema = LoginSuccessSchema(many=False)
+ns = api.namespace("players", description="Players")
+
+
+@ns.route("")
+class PlayersResource(Resource):
 
     @anyadmin_required
-    def index(self):
+    def get(self):
         players = Player.query.all()
-        return jsonify(self.players_schema.dump(players)), 200
-
-    @anyadmin_required
-    def get(self, id_: int):  # Using names would have caused problems with the /me endpoint
-        player = Player.query.get_or_404(id_)
-        return jsonify(self.player_schema.dump(player)), 200
-
-    @ponytoken_required
-    def me(self):
-        return jsonify(self.player_schema.dump(this_player())), 200
+        return jsonify(_players_schema.dump(players)), 200
 
     @json_required
     @timeframe_required
@@ -82,4 +78,19 @@ class PlayersView(FlaskView):
             "faction": faction.id
         }
 
-        return jsonify(self.login_success_schema.dump(response)), 201
+        return jsonify(_login_success_schema.dump(response)), 201
+
+
+@ns.route("/<int:id>")
+class PlayerResource(Resource):
+    @anyadmin_required
+    def get(self, id_: int):  # Using names would have caused problems with the /me endpoint
+        player = Player.query.get_or_404(id_)
+        return jsonify(_player_schema.dump(player)), 200
+
+
+@ns.route("/me")
+class PlayerMeResource(Resource):
+    @ponytoken_required
+    def get(self):
+        return jsonify(_player_schema.dump(this_player())), 200
