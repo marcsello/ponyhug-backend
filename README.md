@@ -4,8 +4,6 @@ A QR Code based Treasure-hunt like AR game with ponies! Shamelessly copied from 
 
 This repository contains the backend of the game which exposes a REST API for the [frontend](https://github.com/marcsello/ponyhug-frontend).
 
-**Wiki**: https://xwiki.kmlabz.com/bin/view/Projektek/PonyHug/
-
 ## Running
 
 TODO: Docker
