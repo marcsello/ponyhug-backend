@@ -1,5 +1,7 @@
 # PonyHug Backend
 
+[![Build Status](https://drone.k8s.marcsello.com/api/badges/marcsello/ponyhug-backend/status.svg)](https://drone.k8s.marcsello.com/marcsello/ponyhug-backend)
+
 A QR Code based Treasure-hunt like AR game with ponies! Shamelessly copied from here: https://hug.brony.eu/
 
 This repository contains the backend of the game which exposes a REST API for the [frontend](https://github.com/marcsello/ponyhug-frontend).
