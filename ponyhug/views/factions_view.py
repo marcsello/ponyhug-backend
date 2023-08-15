@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import abort, jsonify, request
+from flask import abort, request
 from .api import api
 from flask_restx import Resource
 from marshmallow import ValidationError
@@ -20,7 +20,7 @@ class FactionsResource(Resource):
     @ponytoken_required
     def get(self):
         factions = Faction.query.all()
-        return jsonify(_factions_schema.dump(factions)), 200
+        return _factions_schema.dump(factions), 200
 
     @anyadmin_required
     @json_required
@@ -32,22 +32,22 @@ class FactionsResource(Resource):
 
         db.session.add(faction)
         db.session.commit()
-        return jsonify(_faction_schema.dump(faction)), 201
+        return _faction_schema.dump(faction), 201
 
 
 @ns.route("/my")
 class FactionMyResource(Resource):
     @ponytoken_required
     def get(self):
-        return jsonify(_faction_schema.dump(this_player().faction))
+        return _faction_schema.dump(this_player().faction)
 
 
-@ns.route("/<int:id>")
+@ns.route("/<int:id_>")
 class FactionResource(Resource):
     @ponytoken_required
     def get(self, id_: int):
         faction = Faction.query.filter_by(id=id_).first_or_404("No such faction")
-        return jsonify(_faction_schema.dump(faction)), 200
+        return _faction_schema.dump(faction), 200
 
     @anyadmin_required
     def delete(self, id_: int):

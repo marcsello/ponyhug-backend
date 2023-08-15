@@ -21,7 +21,7 @@ class PonySchema(SQLAlchemyAutoSchema):
 
         return {
             "playername": first_hug_for_this_pony.player.name,
-            "timestamp": first_hug_for_this_pony.timestamp
+            "timestamp": first_hug_for_this_pony.timestamp.isoformat()  # need string
         }
 
     class Meta:

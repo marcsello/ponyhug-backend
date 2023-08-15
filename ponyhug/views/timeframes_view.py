@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from datetime import datetime
 import tzlocal
-from flask import jsonify, abort, request
+from flask import abort, request
 from .api import api
 from flask_restx import Resource
 from marshmallow import ValidationError
@@ -27,7 +27,7 @@ class CurrentTimeframeResource(Resource):
             db.and_(Timeframe.begin_timestamp <= now, Timeframe.end_timestamp >= now)
         ).first_or_404("No active timeframe")
 
-        return jsonify(_timeframe_schema_noid.dump(timeframe)), 200
+        return _timeframe_schema_noid.dump(timeframe), 200
 
 
 @ns.route('')
@@ -35,7 +35,7 @@ class TimeframesResource(Resource):
     @anyadmin_required
     def get(self):
         timeframes = Timeframe.query.all()
-        return jsonify(_timeframes_schema.dump(timeframes)), 200
+        return _timeframes_schema.dump(timeframes), 200
 
     @anyadmin_required
     @json_required
@@ -47,14 +47,14 @@ class TimeframesResource(Resource):
 
         db.session.add(timeframe)
         db.session.commit()
-        return jsonify(_timeframe_schema.dump(timeframe)), 201
+        return _timeframe_schema.dump(timeframe), 201
 
 
-@ns.route('/<int:id>')
+@ns.route('/<int:id_>')
 class TimeframeResource(Resource):
 
     @anyadmin_required
-    def delete(self, timeframeid: int):
-        Timeframe.query.filter_by(id=timeframeid).delete()
+    def delete(self, id_: int):
+        Timeframe.query.filter_by(id=id_).delete()
         db.session.commit()
         return '', 204

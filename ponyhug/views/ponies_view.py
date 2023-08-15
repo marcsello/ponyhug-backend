@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import abort, jsonify, request
+from flask import abort, request
 from .api import api
 from flask_restx import Resource
 from marshmallow import ValidationError
@@ -21,7 +21,7 @@ class PoniesResource(Resource):
     @anyadmin_required
     def get(self):
         ponies = Pony.query.all()
-        return jsonify(_ponies_schema.dump(ponies)), 200
+        return _ponies_schema.dump(ponies), 200
 
     @anyadmin_required
     @json_required
@@ -33,7 +33,7 @@ class PoniesResource(Resource):
 
         db.session.add(pony)
         db.session.commit()
-        return jsonify(_pony_schema.dump(pony)), 201
+        return _pony_schema.dump(pony), 201
 
 
 @ns.route("/count")
@@ -41,24 +41,24 @@ class PonyCountResource(Resource):
     @ponytoken_required
     def get(self):
         total_ponies = Pony.query.count()
-        return jsonify({"total_ponies": total_ponies}), 200
+        return {"total_ponies": total_ponies}, 200
 
 
-@ns.route("/<int:id>")
+@ns.route("/<int:id_>")
 class PonyResource(Resource):
     @ponytoken_required
-    def get(self, ponyid: int):  # TODO: this can be solved using a single query
-        pony = Pony.query.get_or_404(ponyid, "Undiscovered or non-existent pony")
+    def get(self, id_: int):  # TODO: this can be solved using a single query
+        pony = Pony.query.get_or_404(id_, "Undiscovered or non-existent pony")
 
         # should replace to exists()
         Hug.query.filter(
             db.and_(Hug.player == this_player(), Hug.pony == pony)
         ).first_or_404("Undiscovered or non-existent pony")
 
-        return jsonify(_pony_schema.dump(pony)), 200
+        return _pony_schema.dump(pony), 200
 
     @anyadmin_required
-    def delete(self, ponyid: int):
-        Pony.query.filter_by(id=ponyid).delete()
+    def delete(self, id_: int):
+        Pony.query.filter_by(id=id_).delete()
         db.session.commit()
         return '', 204

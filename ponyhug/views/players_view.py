@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import abort, jsonify, request, current_app
+from flask import abort, request, current_app
 from .api import api
 from flask_restx import Resource
 
@@ -26,7 +26,7 @@ class PlayersResource(Resource):
     @anyadmin_required
     def get(self):
         players = Player.query.all()
-        return jsonify(_players_schema.dump(players)), 200
+        return _players_schema.dump(players), 200
 
     @json_required
     @timeframe_required
@@ -78,19 +78,19 @@ class PlayersResource(Resource):
             "faction": faction.id
         }
 
-        return jsonify(_login_success_schema.dump(response)), 201
+        return _login_success_schema.dump(response), 201
 
 
-@ns.route("/<int:id>")
+@ns.route("/<int:id_>")
 class PlayerResource(Resource):
     @anyadmin_required
     def get(self, id_: int):  # Using names would have caused problems with the /me endpoint
         player = Player.query.get_or_404(id_)
-        return jsonify(_player_schema.dump(player)), 200
+        return _player_schema.dump(player), 200
 
 
 @ns.route("/me")
 class PlayerMeResource(Resource):
     @ponytoken_required
     def get(self):
-        return jsonify(_player_schema.dump(this_player())), 200
+        return _player_schema.dump(this_player()), 200

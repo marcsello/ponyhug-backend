@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import abort, current_app, request, jsonify
+from flask import abort, current_app, request
 from .api import api
 from flask_restx import Resource
 from utils import ponytoken_required, this_player, json_required, anyadmin_required
@@ -12,6 +12,7 @@ from sqlalchemy import func
 ns = api.namespace('admin', description="Administrative operations")
 
 _login_success_schema = LoginSuccessSchema(many=False)
+
 
 @ns.route("/promote")
 class AdminPromoteResource(Resource):
@@ -53,7 +54,7 @@ class AdminImpersonateResource(Resource):
             "faction": player.faction.id
         }
 
-        return jsonify(_login_success_schema.dump(response)), 200
+        return _login_success_schema.dump(response), 200
 
 
 @ns.route("/crashtest")
@@ -61,7 +62,7 @@ class AdminCrashTestResource(Resource):
     @anyadmin_required
     def post(self):
         a = 1 / 0
-        return jsonify({"a": a}), 200
+        return {"a": a}, 200
 
 
 @ns.route("/faction_members")
@@ -69,4 +70,4 @@ class AdminFactionMembersResource(Resource):
     @anyadmin_required
     def get(self):
         counters = db.session.query(Player.faction_id, func.count(Player.faction_id)).group_by(Player.faction_id).all()
-        return jsonify(dict(counters))
+        return dict(counters)

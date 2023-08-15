@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import request, jsonify, abort
+from flask import request, abort
 from .api import api
 from flask_restx import Resource
 from marshmallow import ValidationError
@@ -22,7 +22,7 @@ class HugsResource(Resource):
 
     def get(self):
         hugs = this_player().hugs
-        return jsonify(_hugs_schema.dump(hugs)), 200
+        return _hugs_schema.dump(hugs), 200
 
     @json_required
     @timeframe_required
@@ -48,21 +48,21 @@ class HugsResource(Resource):
         db.session.add(hug)
         db.session.commit()
 
-        return jsonify(_hug_schema.dump(hug)), 201 if new else 200
+        return _hug_schema.dump(hug), 201 if new else 200
 
 @ns.route("/count")
 class HugsCountResource(Resource):
 
     def get(self):
         hug_counter = Hug.query.filter_by(player=this_player()).count()
-        return jsonify({"hug_counter": hug_counter}), 200
+        return {"hug_counter": hug_counter}, 200
 
 
-@ns.route("/<int:id>")
+@ns.route("/<int:id_>")
 class HugResource(Resource):
 
-    def get(self, hugid: int):
+    def get(self, id_: int):
         # only hugs by the current player is allowed
-        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == hugid)).first_or_404()
+        hug = Hug.query.filter(db.and_(Hug.player == this_player(), Hug.id == id_)).first_or_404()
 
-        return jsonify(_hug_schema.dump(hug)), 200
+        return _hug_schema.dump(hug), 200

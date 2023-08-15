@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from sqlalchemy import func, desc
-from flask import jsonify
 from .api import api
 from flask_restx import Resource
 
@@ -24,7 +23,7 @@ class LeaderResource(Resource):
         if leader_stat:
             count = leader_stat.cnt
 
-        return jsonify({"hug_counter": count}), 200
+        return {"hug_counter": count}, 200
 
 
 @ns.route('/factions')
@@ -39,4 +38,4 @@ class FactionsResource(Resource):
             Hug, Hug.player_id == Player.id
         ).group_by(Faction).all()
 
-        return jsonify(dict(counters))
+        return dict(counters)
