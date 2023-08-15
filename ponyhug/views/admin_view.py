@@ -9,19 +9,15 @@ from model import db, Player
 from schemas import PonySchema, PlayerSchema, LoginSuccessSchema
 from sqlalchemy import func
 
+ns = api.namespace('admin', description="Administrative operations")
 
-class AdminView(Resource):
-    pony_schema = PonySchema(many=False)
-    ponies_schema = PonySchema(many=True)
+_login_success_schema = LoginSuccessSchema(many=False)
 
-    login_success_schema = LoginSuccessSchema(many=False)
-
-    player_schema = PlayerSchema(many=False)
-
+@ns.route("/promote")
+class AdminPromoteResource(Resource):
     @ponytoken_required
     @json_required
-    @route('/promote', methods=['POST'])
-    def promote(self):
+    def post(self):
 
         player = this_player()
 
@@ -40,9 +36,11 @@ class AdminView(Resource):
 
         return '', 204
 
+
+@ns.route("/impersonate")
+class AdminImpersonateResource(Resource):
     @anyadmin_required
-    @route('/impersonate', methods=['POST'])
-    def impersonate(self):
+    def post(self):
         params = request.get_json()
         playername = params.get("playername")
 
@@ -55,15 +53,20 @@ class AdminView(Resource):
             "faction": player.faction.id
         }
 
-        return jsonify(self.login_success_schema.dump(response)), 200
+        return jsonify(_login_success_schema.dump(response)), 200
 
+
+@ns.route("/crashtest")
+class AdminCrashTestResource(Resource):
     @anyadmin_required
-    @route('/crashtest', methods=['POST'])
-    def crashtest(self):
+    def post(self):
         a = 1 / 0
         return jsonify({"a": a}), 200
 
+
+@ns.route("/faction_members")
+class AdminFactionMembersResource(Resource):
     @anyadmin_required
-    def faction_members(self):
+    def get(self):
         counters = db.session.query(Player.faction_id, func.count(Player.faction_id)).group_by(Player.faction_id).all()
         return jsonify(dict(counters))

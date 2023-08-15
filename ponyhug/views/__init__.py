@@ -7,3 +7,5 @@ from .stats_view import LeaderResource, FactionsResource
 from .ponies_view import PoniesResource, PonyCountResource, PonyResource
 from .players_view import PlayersResource, PlayerResource, PlayerMeResource
 from .hugs_view import HugsResource, HugsCountResource, HugResource
+from .factions_view import FactionsResource, FactionMyResource, FactionResource
+from .admin_view import AdminFactionMembersResource, AdminImpersonateResource, AdminPromoteResource, AdminCrashTestResource
