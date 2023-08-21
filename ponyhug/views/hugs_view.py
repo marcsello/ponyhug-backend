@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import request, abort
+from flask import request, abort, current_app
 from .api import api
 from flask_restx import Resource
 from marshmallow import ValidationError
@@ -51,6 +51,9 @@ class HugsResource(Resource):
 
         db.session.add(hug)
         db.session.commit()
+
+        if new:
+            current_app.logger.info(f"User {this_player().name} [{this_player().id}] hugged a new pony: {pony.name} [{pony.id}]")
 
         return _hug_schema.dump(hug), 201 if new else 200
 

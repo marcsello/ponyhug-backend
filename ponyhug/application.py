@@ -32,7 +32,7 @@ def create_app(config_object=None) -> Flask:
 
     db.init_app(app)
     jwt.init_app(app)
-    CORS(app)
+    CORS(app, resources="*")
 
     # register health checks
     register_all_health_checks(app)

@@ -10,8 +10,8 @@ from model import db, Hug, Player
 ns = api.namespace("stats", description="Various statistics")
 
 
-@ns.route('/leader')
-class LeaderResource(Resource):
+@ns.route('')
+class StatsResource(Resource):
 
     @ponytoken_required
     def get(self):
@@ -19,8 +19,13 @@ class LeaderResource(Resource):
             func.count(Hug.player_id).label('cnt'), Hug.player_id
         ).group_by(Hug.player_id).order_by(desc('cnt')).first()
 
-        count = 0
+        leader_hug_count = 0
         if leader_stat:
-            count = leader_stat.cnt
+            leader_hug_count = leader_stat.cnt
 
-        return {"hug_counter": count}, 200
+        sum_hugs = db.session.query(Hug.id).count()
+
+        return {
+            "leader_hug_count": leader_hug_count,
+            "sum_hugs": sum_hugs
+        }, 200

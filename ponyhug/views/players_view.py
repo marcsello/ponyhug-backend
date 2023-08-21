@@ -57,7 +57,7 @@ class PlayersResource(Resource):
         except sqlalchemy.exc.IntegrityError:
             return abort(409, "Name already in use")
 
-        current_app.logger.info(f"User {playername} registered.")
+        current_app.logger.info(f"User {playername} [{player.id}] registered.")
 
         response = {
             "jwt": create_access_token(identity=player.id),
