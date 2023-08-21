@@ -6,9 +6,10 @@ from flask_restx import Resource
 from utils import json_required, ponytoken_required, this_player, timeframe_required, anyadmin_required
 from flask_jwt_extended import create_access_token
 
+from marshmallow.exceptions import ValidationError
+
 from model import db, Player
 from schemas import PlayerSchema, LoginSuccessSchema
-from sqlalchemy import func
 import sqlalchemy.exc
 import bleach
 
@@ -73,6 +74,24 @@ class PlayerResource(Resource):
     def get(self, id_: int):  # Using names would have caused problems with the /me endpoint
         player = Player.query.get_or_404(id_)
         return _player_schema.dump(player), 200
+
+    @anyadmin_required
+    def patch(self, id_: int):
+        player = Player.query.get_or_404(id_)
+
+        try:
+            updated_player = _player_schema.load(request.get_json(), session=db, instance=player, partial=True)
+        except ValidationError as e:
+            abort(422, str(e))
+
+        db.session.add(updated_player)
+
+        try:
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            return abort(409, "some conflict... Name already in use?")
+
+        return _player_schema.dump(updated_player), 200
 
 
 @ns.route("/me")
