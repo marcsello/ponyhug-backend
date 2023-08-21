@@ -34,9 +34,6 @@ def create_app(config_object=None) -> Flask:
     jwt.init_app(app)
     CORS(app)
 
-    with app.app_context():
-        db.create_all()
-
     # register health checks
     register_all_health_checks(app)
 
