@@ -50,7 +50,8 @@ class AdminImpersonateResource(Resource):
         response = {
             "jwt": create_access_token(identity=player.id),
             "name": playername,
-            "is_admin": player.is_admin
+            "is_admin": player.is_admin,
+            "is_approved": player.is_approved
         }
 
         return _login_success_schema.dump(response), 200
