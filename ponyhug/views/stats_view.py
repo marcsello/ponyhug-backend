@@ -5,7 +5,7 @@ from flask_restx import Resource
 
 from utils import ponytoken_required
 
-from model import db, Hug, Player, Faction
+from model import db, Hug, Player
 
 ns = api.namespace("stats", description="Various statistics")
 
@@ -24,18 +24,3 @@ class LeaderResource(Resource):
             count = leader_stat.cnt
 
         return {"hug_counter": count}, 200
-
-
-@ns.route('/factions')
-class FactionsResource(Resource):
-    @ponytoken_required
-    def get(self):
-        counters = db.session.query(
-            Faction.id, func.count(Hug.id)
-        ).join(
-            Player, Player.faction_id == Faction.id
-        ).join(
-            Hug, Hug.player_id == Player.id
-        ).group_by(Faction).all()
-
-        return dict(counters)

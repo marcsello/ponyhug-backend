@@ -6,7 +6,7 @@ from flask_restx import Resource
 from utils import json_required, ponytoken_required, this_player, timeframe_required, anyadmin_required
 from flask_jwt_extended import create_access_token
 
-from model import db, Player, Faction
+from model import db, Player
 from schemas import PlayerSchema, LoginSuccessSchema
 from sqlalchemy import func
 import sqlalchemy.exc
@@ -47,20 +47,7 @@ class PlayersResource(Resource):
         # Length limiting is required here as SQLAlchemy does not validate the length of a field
         # If a database engine does not validate length (Like sqlite) that would lead to issues
 
-        faction_member_counts = db.session.query(
-            Faction, func.count(Player.id)
-        ).outerjoin(
-            Player
-        ).group_by(Faction).all()
-
-        if not faction_member_counts:
-            # No factions registered
-            current_app.logger.error("Can not register new user: Factions not defined yet!")
-            return abort(500, "Factions not defined yet")
-
-        faction = min(faction_member_counts, key=lambda o: o[1])[0]
-
-        player = Player(name=playername, faction=faction)
+        player = Player(name=playername)
 
         db.session.add(player)
 
@@ -69,13 +56,12 @@ class PlayersResource(Resource):
         except sqlalchemy.exc.IntegrityError:
             return abort(409, "Name already in use")
 
-        current_app.logger.info(f"User {playername} registered. Assigned to faction: {faction.name}.")
+        current_app.logger.info(f"User {playername} registered.")
 
         response = {
             "jwt": create_access_token(identity=player.id),
             "name": player.name,
-            "is_admin": player.is_admin,
-            "faction": faction.id
+            "is_admin": player.is_admin
         }
 
         return _login_success_schema.dump(response), 201

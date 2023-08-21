@@ -50,8 +50,7 @@ class AdminImpersonateResource(Resource):
         response = {
             "jwt": create_access_token(identity=player.id),
             "name": playername,
-            "is_admin": player.is_admin,
-            "faction": player.faction.id
+            "is_admin": player.is_admin
         }
 
         return _login_success_schema.dump(response), 200
@@ -63,11 +62,3 @@ class AdminCrashTestResource(Resource):
     def post(self):
         a = 1 / 0
         return {"a": a}, 200
-
-
-@ns.route("/faction_members")
-class AdminFactionMembersResource(Resource):
-    @anyadmin_required
-    def get(self):
-        counters = db.session.query(Player.faction_id, func.count(Player.faction_id)).group_by(Player.faction_id).all()
-        return dict(counters)

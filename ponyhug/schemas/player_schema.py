@@ -10,7 +10,6 @@ from model import Hug
 class PlayerSchema(SQLAlchemyAutoSchema):
     hug_counter = fields.Method("get_hug_count", dump_only=True)
     playtime = fields.Method("get_playtime", dump_only=True)
-    faction = fields.Pluck("FactionSchema", "id", many=False)
 
     def get_hug_count(self, player) -> int:
         return Hug.query.filter_by(player=player).count()
@@ -29,9 +28,6 @@ class PlayerSchema(SQLAlchemyAutoSchema):
         exclude = [
             'id',
             'hugs'
-        ]
-        dump_only = [
-            'faction'
         ]
         model = Player
         include_relationships = True
