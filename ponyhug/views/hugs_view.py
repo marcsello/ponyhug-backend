@@ -27,6 +27,10 @@ class HugsResource(Resource):
     @json_required
     @timeframe_required
     def post(self):
+
+        if not this_player().is_approved:
+            return abort(403, "player not approved")
+
         try:
             key = _ponykey_schema.load(request.get_json())
         except ValidationError as e:
