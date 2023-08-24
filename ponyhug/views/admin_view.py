@@ -45,7 +45,7 @@ class AdminImpersonateResource(Resource):
         params = request.get_json()
         playername = params.get("playername")
 
-        player = Player.query.filter(name=playername).first_or_404("No such player")
+        player = Player.query.filter_by(name=playername).first_or_404("No such player")
 
         response = {
             "jwt": create_access_token(identity=player.id),

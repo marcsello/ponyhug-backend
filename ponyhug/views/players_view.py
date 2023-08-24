@@ -14,6 +14,7 @@ import sqlalchemy.exc
 import bleach
 
 _player_schema = PlayerSchema(many=False)
+_player_schema_no_id = PlayerSchema(many=False, exclude=['id'])
 _players_schema = PlayerSchema(many=True)
 
 _login_success_schema = LoginSuccessSchema(many=False)
@@ -99,4 +100,4 @@ class PlayerResource(Resource):
 class PlayerMeResource(Resource):
     @ponytoken_required
     def get(self):
-        return _player_schema.dump(this_player()), 200
+        return _player_schema_no_id.dump(this_player()), 200
