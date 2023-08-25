@@ -12,7 +12,7 @@ from schemas import PonySchema
 ns = api.namespace("ponies", description="Ponies")
 
 _pony_schema = PonySchema(many=False)
-_ponies_schema = PonySchema(many=True, only=['id', 'name', 'image', 'order'])
+_ponies_schema = PonySchema(many=True)
 
 
 @ns.route("")
