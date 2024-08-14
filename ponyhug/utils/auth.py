@@ -6,16 +6,13 @@ from functools import wraps
 
 from model import Player
 
-try:
-    from flask import _app_ctx_stack as ctx_stack
-except ImportError:  # pragma: no cover
-    from flask import _request_ctx_stack as ctx_stack
+from flask import g  # request ctx got deprecated: https://flask.palletsprojects.com/en/2.3.x/changes/#version-2-2-0
 
 jwt = JWTManager()
 
 
 def this_player() -> Player:
-    return ctx_stack.top.current_player_object
+    return g.ponyhug__current_player_object
 
 
 def ponytoken_required(f):
@@ -28,7 +25,7 @@ def ponytoken_required(f):
         player = Player.query.get(playerid)
 
         if player:
-            ctx_stack.top.current_player_object = player
+            g.ponyhug__current_player_object = player
             return f(*args, **kwargs)
 
         else:
