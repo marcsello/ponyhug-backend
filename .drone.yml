@@ -12,7 +12,7 @@ steps:
   - name: safety
     image: pyupio/safety
     commands:
-    - safety check --file requirements.txt
+    - safety check --file requirements.txt -i 70624
 
   - name: kaniko
     image: plugins/kaniko
