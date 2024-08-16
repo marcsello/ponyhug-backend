@@ -7,7 +7,7 @@ class Pony(db.Model):
     key = db.Column(db.String(10), unique=True, nullable=False)
 
     name = db.Column(db.String(50), nullable=False)
-    story = db.Column(db.String(255), nullable=True)
+    story = db.Column(db.String(1000), nullable=True)
     source = db.Column(db.String(255), nullable=True)
     image = db.Column(db.String(255), nullable=False)
 
