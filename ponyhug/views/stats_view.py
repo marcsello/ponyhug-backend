@@ -5,7 +5,7 @@ from flask_restx import Resource
 
 from utils import ponytoken_required
 
-from model import db, Hug, Player
+from model import db, Hug, Player, Pony
 
 ns = api.namespace("stats", description="Various statistics")
 
@@ -25,7 +25,10 @@ class StatsResource(Resource):
 
         sum_hugs = db.session.query(Hug.id).count()
 
+        unhugged_ponies_count = db.session.query(func.count(Pony.id)).outerjoin(Hug, Pony.id == Hug.pony_id).filter(Hug.id == None).scalar()
+
         return {
             "leader_hug_count": leader_hug_count,
+            "unhugged_ponies_count": unhugged_ponies_count,
             "sum_hugs": sum_hugs
         }, 200
