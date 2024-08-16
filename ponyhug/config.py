@@ -15,4 +15,6 @@ class Config:
     SENTRY_RELEASE_ID = os.environ.get('SENTRY_RELEASE_ID', 'dev')
     SENTRY_ENVIRONMENT = os.environ.get('SENTRY_ENVIRONMENT', 'dev')
 
+    ERROR_INCLUDE_MESSAGE = False
+
     CORS_ORIGINS = os.environ.get('ALLOWED_ORIGINS', "*")

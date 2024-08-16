@@ -41,6 +41,14 @@ def create_app(config_object=None) -> Flask:
     from views import api
     api.init_app(app)
 
+    from werkzeug.exceptions import HTTPException
+
+    @api.errorhandler(HTTPException)
+    def handle_all_http_exception(error: HTTPException):
+        # hopefully this makes flask, and therefore Sentry consider the error handled
+        # so it will no longer report 404 errors
+        return {'message': error.description}, error.code
+
     return app
 
 
