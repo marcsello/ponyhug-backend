@@ -9,7 +9,7 @@ Flask-JWT-Extended==4.6.0
 bleach==6.1.0
 tzlocal==5.2
 pytz==2024.1
-flask-cors==4.0.1
+flask-cors==5.0.0
 sentry_sdk[flask]==2.13.0
 py-healthcheck==1.10.1
 
